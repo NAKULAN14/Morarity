@@ -52,6 +52,7 @@ class AgentLoopResult:
     source_runtime_match: bool = False
     dynamic_verification_performed: bool = False
     stopping_reason: Optional[str] = None
+    verification_response: Optional[VerificationResponse] = None
 
 
 class MoriartyAgentLoop:
@@ -379,6 +380,15 @@ class MoriartyAgentLoop:
                 source_runtime_match=source_runtime_match,
                 final_action=final_action,
                 stopping_reason=stopping_reason,
+                decision_trace=decision_trace,
+                patch_comparison={
+                    "status": patch_comparison.status,
+                    "summary": patch_comparison.summary,
+                    "original_rule_ids": patch_comparison.original_rule_ids,
+                    "patched_rule_ids": patch_comparison.patched_rule_ids,
+                    "static_improvement_detected": patch_comparison.static_improvement_detected,
+                    "dynamic_verification_performed": patch_comparison.dynamic_verification_performed,
+                } if patch_comparison else None,
             )
 
             # 7. Generate JSON Report
@@ -424,6 +434,7 @@ class MoriartyAgentLoop:
                 source_runtime_match=source_runtime_match,
                 dynamic_verification_performed=is_dynamic_target and len(results) > 0,
                 stopping_reason=stopping_reason,
+                verification_response=verification_response,
             )
 
         finally:

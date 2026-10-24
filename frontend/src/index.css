@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #07090B;
+    color: #E8EEF0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.011em;
+    overflow-x: hidden;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', 'Geist Mono', Consolas, monospace;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Custom technical scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #07090B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222B30;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #324048;
+}
+
+/* Subtle grid background pattern */
+.bg-tech-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(34, 43, 48, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 43, 48, 0.25) 1px, transparent 1px);
+}
+
+.bg-tech-dots {
+  background-size: 20px 20px;
+  background-image: radial-gradient(circle, rgba(34, 43, 48, 0.5) 1px, transparent 1px);
+}
+
+/* Precision technical borders and panels */
+.panel-border {
+  border: 1px solid #222B30;
+}
+
+.panel-elevated {
+  background-color: #0C1013;
+  border: 1px solid #222B30;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

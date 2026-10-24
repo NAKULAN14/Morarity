@@ -96,8 +96,13 @@ class Evidence(BaseModel):
 
 
 class VerificationRequest(BaseModel):
-    source_code: str = Field(min_length=1)
+    source_code: Optional[str] = None
+    original_source: Optional[str] = None
+    patched_source: Optional[str] = None
     scenario: Optional[str] = None
+    target_type: Optional[str] = "SUBMITTED_SOURCE_EXECUTION"
+    execute_submitted_source: Optional[bool] = True
+    max_tests: Optional[int] = 3
 
 
 class VerificationResponse(BaseModel):
@@ -116,3 +121,6 @@ class VerificationResponse(BaseModel):
     source_runtime_match: Optional[bool] = None
     final_action: Optional[str] = None
     stopping_reason: Optional[str] = None
+    decision_trace: Optional[list[dict[str, Any]]] = None
+    patch_comparison: Optional[dict[str, Any]] = None
+    scenario_id: Optional[str] = None

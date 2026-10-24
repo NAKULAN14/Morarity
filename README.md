@@ -254,6 +254,45 @@ Summary: Controlled dynamic verification demonstrated that SQL injection payload
 
 ---
 
+## 7. Starting the Workstation (Web UI + Backend)
+
+Moriarty features a dark, technical, evaluator-ready security verification workstation built with React, TypeScript, Vite, and Tailwind CSS.
+
+### Quick Start (One Command)
+Run from the repository root:
+```cmd
+scripts\start.bat
+```
+This automatically launches:
+- **Backend API**: `http://127.0.0.1:8000` (FastAPI with OpenAPI docs at `/docs`)
+- **Workstation UI**: `http://127.0.0.1:5173` (Vite dev server with automatic backend proxy)
+
+### Manual Start
+
+#### Backend API:
+```cmd
+scripts\start_backend.bat
+# or:
+set PYTHONPATH=backend
+backend\venv\Scripts\uvicorn.exe --app-dir backend app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+#### Workstation Frontend:
+```cmd
+scripts\start_frontend.bat
+# or:
+cd frontend
+npm run dev -- --host 127.0.0.1 --port 5173
+```
+
+#### Production Build:
+```cmd
+cd frontend
+npm run build
+```
+
+---
+
 ## 8. Limitations & Scope
 
 1. **Verification Scope**: Verification is strictly bounded to the specific local SQLite query execution path tested. A `VERIFIED` verdict does not claim that the wider application or untested routes are free from other security vulnerabilities.
