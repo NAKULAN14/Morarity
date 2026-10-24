@@ -1,0 +1,277 @@
+{
+    "verification_id": "ba193645-8c1b-41c3-bc94-5486f24a7377",
+    "verdict": "INCONCLUSIVE",
+    "summary": "The controlled demonstration completed, but it did not execute the submitted application. Real application dynamic verification is required to verify the patch.",
+    "verification_scope": "Simulated demonstration fixture only",
+    "dynamic_verification_performed": false,
+    "target_type": "CONTROLLED_FIXTURE",
+    "target_provenance": "DEMO_FIXTURE",
+    "submitted_source_executed": false,
+    "source_runtime_match": false,
+    "final_action": "STOP_INCONCLUSIVE",
+    "stopping_reason": "TEST_BUDGET_EXHAUSTED_WITHOUT_SUFFICIENT_EVIDENCE",
+    "analysis": {
+        "supported": true,
+        "vulnerability_type": "SQL_INJECTION",
+        "findings": [
+            {
+                "rule_id": "SQLI_PARAMETERIZED_QUERY",
+                "message": "The SQL query appears to use parameterized execution. Verify that the query structure is static and that all untrusted values are passed as parameters.",
+                "severity": "INFO",
+                "line": 2,
+                "evidence": "'SELECT id, username, role, email FROM users WHERE username = ?'"
+            }
+        ],
+        "security_invariants": [
+            "SQL query structure must not be controlled by untrusted input.",
+            "User-controlled values should be passed through query parameters.",
+            "Required application functionality must remain intact."
+        ],
+        "summary": "Recognized SQL execution calls appear to use static query structures or parameterized execution. Dynamic verification is still required."
+    },
+    "tests_executed": [
+        {
+            "test_id": "SQLI_DIFFERENTIAL_001",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it.",
+            "execution_time_ms": null,
+            "error": null,
+            "expected_behavior": null,
+            "observed_behavior": null,
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": null
+        },
+        {
+            "test_id": "SQLI_DIFFERENTIAL_002",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it.",
+            "execution_time_ms": null,
+            "error": null,
+            "expected_behavior": null,
+            "observed_behavior": null,
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": null
+        },
+        {
+            "test_id": "SQLI_DIFFERENTIAL_003",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it.",
+            "execution_time_ms": null,
+            "error": null,
+            "expected_behavior": null,
+            "observed_behavior": null,
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": null
+        }
+    ],
+    "evidence": [
+        {
+            "evidence_id": "7b1103c4-93d3-4dda-ba0e-ebd71dfa67ee",
+            "test_id": "STATIC_PATCH_COMPARISON",
+            "category": "STATIC_ANALYSIS",
+            "description": "The recognized unsafe SQL construction in the original source is absent from the patched source, and the patch contains a recognized static or parameterized SQL pattern. This is a static improvement signal, not dynamic verification.",
+            "observed": {
+                "status": "PATCH_PATTERN_IMPROVED",
+                "original_rule_ids": [
+                    "SQLI_UNSAFE_QUERY"
+                ],
+                "patched_rule_ids": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "static_improvement_detected": true,
+                "dynamic_verification_performed": false,
+                "target_type": "STATIC_SOURCE",
+                "target_provenance": "SUBMITTED_SOURCE_AST",
+                "submitted_source_executed": false,
+                "source_runtime_match": true
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T09:00:55.318768+00:00"
+        },
+        {
+            "evidence_id": "3fdc2ddf-e7a5-4f73-9fc6-2ec8cb77a0d3",
+            "test_id": "SQLI_DIFFERENTIAL_001",
+            "category": "CONTROLLED_DEMONSTRATION",
+            "description": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it. Vulnerable rows: 2. Patched rows: 0.",
+            "observed": {
+                "outcome": "PASS",
+                "passed": true,
+                "execution_time_ms": null,
+                "error": null,
+                "target_type": "CONTROLLED_FIXTURE",
+                "target_provenance": "DEMO_FIXTURE",
+                "submitted_source_executed": false,
+                "source_runtime_match": false,
+                "verification_scope": "Simulated demonstration fixture only"
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T09:00:55.319289+00:00"
+        },
+        {
+            "evidence_id": "1623b035-1647-4b73-9c53-7a7c8e601f3f",
+            "test_id": "SQLI_DIFFERENTIAL_002",
+            "category": "CONTROLLED_DEMONSTRATION",
+            "description": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it. Vulnerable rows: 2. Patched rows: 0.",
+            "observed": {
+                "outcome": "PASS",
+                "passed": true,
+                "execution_time_ms": null,
+                "error": null,
+                "target_type": "CONTROLLED_FIXTURE",
+                "target_provenance": "DEMO_FIXTURE",
+                "submitted_source_executed": false,
+                "source_runtime_match": false,
+                "verification_scope": "Simulated demonstration fixture only"
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T09:00:55.319710+00:00"
+        },
+        {
+            "evidence_id": "097929a4-8aa0-43d2-af1c-fed3804789b6",
+            "test_id": "SQLI_DIFFERENTIAL_003",
+            "category": "CONTROLLED_DEMONSTRATION",
+            "description": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it. Vulnerable rows: 2. Patched rows: 0.",
+            "observed": {
+                "outcome": "PASS",
+                "passed": true,
+                "execution_time_ms": null,
+                "error": null,
+                "target_type": "CONTROLLED_FIXTURE",
+                "target_provenance": "DEMO_FIXTURE",
+                "submitted_source_executed": false,
+                "source_runtime_match": false,
+                "verification_scope": "Simulated demonstration fixture only"
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T09:00:55.320176+00:00"
+        }
+    ],
+    "limitations": [
+        "Static source comparison does not establish runtime security.",
+        "Controlled demonstration tests do not execute the submitted application.",
+        "A VERIFIED verdict requires empirical evidence that directly supports the relevant security invariants.",
+        "Verification scope is limited to the tested SQL query execution path.",
+        "Scope of verification is restricted to the specific SQL query execution path tested.",
+        "Controlled demonstration tests executed against simulated fixtures; submitted application code was not executed."
+    ],
+    "patch_comparison": {
+        "status": "PATCH_PATTERN_IMPROVED",
+        "summary": "The recognized unsafe SQL construction in the original source is absent from the patched source, and the patch contains a recognized static or parameterized SQL pattern. This is a static improvement signal, not dynamic verification.",
+        "original_analysis": {
+            "supported": true,
+            "vulnerability_type": "SQL_INJECTION",
+            "findings": [
+                {
+                    "rule_id": "SQLI_UNSAFE_QUERY",
+                    "message": "The SQL query is constructed dynamically using string concatenation, interpolation, or formatting. This may allow untrusted input to alter SQL structure.",
+                    "severity": "HIGH",
+                    "line": 3,
+                    "evidence": "\"SELECT id, username, role, email FROM users WHERE username = '\" + username + \"'\""
+                }
+            ],
+            "security_invariants": [
+                "SQL query structure must not be controlled by untrusted input.",
+                "User-controlled values should be passed through query parameters.",
+                "Required application functionality must remain intact."
+            ],
+            "summary": "Potentially unsafe SQL query construction was detected. Dynamic verification is required to determine exploitability."
+        },
+        "patched_analysis": {
+            "supported": true,
+            "vulnerability_type": "SQL_INJECTION",
+            "findings": [
+                {
+                    "rule_id": "SQLI_PARAMETERIZED_QUERY",
+                    "message": "The SQL query appears to use parameterized execution. Verify that the query structure is static and that all untrusted values are passed as parameters.",
+                    "severity": "INFO",
+                    "line": 2,
+                    "evidence": "'SELECT id, username, role, email FROM users WHERE username = ?'"
+                }
+            ],
+            "security_invariants": [
+                "SQL query structure must not be controlled by untrusted input.",
+                "User-controlled values should be passed through query parameters.",
+                "Required application functionality must remain intact."
+            ],
+            "summary": "Recognized SQL execution calls appear to use static query structures or parameterized execution. Dynamic verification is still required."
+        },
+        "original_rule_ids": [
+            "SQLI_UNSAFE_QUERY"
+        ],
+        "patched_rule_ids": [
+            "SQLI_PARAMETERIZED_QUERY"
+        ],
+        "static_improvement_detected": true,
+        "dynamic_verification_performed": false
+    },
+    "agent": {
+        "final_action": "STOP_INCONCLUSIVE",
+        "final_reason": "The testing budget has been reached. The available evidence is not sufficient to verify the submitted patch.",
+        "stopping_reason": "TEST_BUDGET_EXHAUSTED_WITHOUT_SUFFICIENT_EVIDENCE",
+        "tests_run": 3,
+        "decision_trace": [
+            {
+                "step": 1,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_OR",
+                "reason": "No tests have been executed yet. Triggered by finding SQLI_PARAMETERIZED_QUERY in patched source: patched code appears to use a safer query construction pattern. This finding indicates structural improvement but does not prove runtime security. Planning controlled verification actions to challenge the parameterized implementation. The agent is starting with a boolean-based test.",
+                "test_input": "' OR '1'='1",
+                "test_outcome": "PASS",
+                "evidence_id": "3fdc2ddf-e7a5-4f73-9fc6-2ec8cb77a0d3",
+                "stop_reason": null
+            },
+            {
+                "step": 2,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_COMMENT",
+                "reason": "Triggered by finding SQLI_PARAMETERIZED_QUERY in patched source: patched code appears to use a safer query construction pattern. This finding indicates structural improvement but does not prove runtime security. Planning controlled verification actions to challenge the parameterized implementation. The previous payload exploited the baseline but was blocked by the patched implementation. The agent is trying another boolean-based strategy to attempt to disprove the fix.",
+                "test_input": "' OR 1=1 --",
+                "test_outcome": "PASS",
+                "evidence_id": "1623b035-1647-4b73-9c53-7a7c8e601f3f",
+                "stop_reason": null
+            },
+            {
+                "step": 3,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_ADMIN",
+                "reason": "Triggered by finding SQLI_PARAMETERIZED_QUERY in patched source: patched code appears to use a safer query construction pattern. This finding indicates structural improvement but does not prove runtime security. Planning controlled verification actions to challenge the parameterized implementation. The previous payload exploited the baseline but was blocked by the patched implementation. The agent is trying another boolean-based strategy to attempt to disprove the fix.",
+                "test_input": "admin' OR '1'='1' --",
+                "test_outcome": "PASS",
+                "evidence_id": "097929a4-8aa0-43d2-af1c-fed3804789b6",
+                "stop_reason": null
+            },
+            {
+                "step": 4,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "STOP_INCONCLUSIVE",
+                "strategy": null,
+                "reason": "The testing budget has been reached. The available evidence is not sufficient to verify the submitted patch.",
+                "test_input": null,
+                "test_outcome": null,
+                "evidence_id": null,
+                "stop_reason": "The testing budget has been reached. The available evidence is not sufficient to verify the submitted patch."
+            }
+        ]
+    }
+}

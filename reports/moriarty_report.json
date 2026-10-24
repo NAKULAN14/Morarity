@@ -1,0 +1,150 @@
+{
+    "verification_id": "d6f6d9f6-f99a-4c5d-9b64-53449e8f756a",
+    "verdict": "INCONCLUSIVE",
+    "summary": "The controlled demonstration completed, but it did not execute the submitted application. Real application dynamic verification is required to verify the patch.",
+    "verification_scope": "Simulated demonstration fixture only",
+    "dynamic_verification_performed": false,
+    "target_type": "CONTROLLED_FIXTURE",
+    "analysis": {
+        "supported": false,
+        "vulnerability_type": null,
+        "findings": [],
+        "security_invariants": [],
+        "summary": "No original-versus-patched source comparison was supplied."
+    },
+    "tests_executed": [
+        {
+            "test_id": "SQLI_DIFFERENTIAL_001",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it.",
+            "execution_time_ms": null,
+            "error": null
+        },
+        {
+            "test_id": "SQLI_DIFFERENTIAL_002",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it.",
+            "execution_time_ms": null,
+            "error": null
+        },
+        {
+            "test_id": "SQLI_DIFFERENTIAL_003",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it.",
+            "execution_time_ms": null,
+            "error": null
+        }
+    ],
+    "evidence": [
+        {
+            "evidence_id": "8c568b42-a261-4f04-89a5-e966599cc84c",
+            "test_id": "SQLI_DIFFERENTIAL_001",
+            "category": "CONTROLLED_DEMONSTRATION",
+            "description": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it. Vulnerable rows: 2. Patched rows: 0.",
+            "observed": {
+                "outcome": "PASS",
+                "passed": true,
+                "execution_time_ms": null,
+                "error": null
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T07:43:33.647176+00:00"
+        },
+        {
+            "evidence_id": "364b445c-a34d-41dc-887d-e41c1559fec6",
+            "test_id": "SQLI_DIFFERENTIAL_002",
+            "category": "CONTROLLED_DEMONSTRATION",
+            "description": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it. Vulnerable rows: 2. Patched rows: 0.",
+            "observed": {
+                "outcome": "PASS",
+                "passed": true,
+                "execution_time_ms": null,
+                "error": null
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T07:43:33.647376+00:00"
+        },
+        {
+            "evidence_id": "aa09d40d-b5e8-44ac-adc9-9e55e72516af",
+            "test_id": "SQLI_DIFFERENTIAL_003",
+            "category": "CONTROLLED_DEMONSTRATION",
+            "description": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it. Vulnerable rows: 2. Patched rows: 0.",
+            "observed": {
+                "outcome": "PASS",
+                "passed": true,
+                "execution_time_ms": null,
+                "error": null
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T07:43:33.647548+00:00"
+        }
+    ],
+    "limitations": [
+        "Static source comparison does not establish runtime security.",
+        "Controlled demonstration tests do not execute the submitted application.",
+        "A VERIFIED verdict requires empirical evidence that directly supports the relevant security invariants.",
+        "Verification scope is limited to the tested SQL query execution path.",
+        "A VERIFIED verdict requires empirical evidence from real application testing.",
+        "Scope of verification is restricted to the specific SQL query execution path tested.",
+        "Controlled demonstration tests executed against simulated fixtures; submitted application code was not executed."
+    ],
+    "patch_comparison": null,
+    "agent": {
+        "final_action": "STOP_INCONCLUSIVE",
+        "final_reason": "The testing budget has been reached. The available evidence is not sufficient to verify the submitted patch.",
+        "tests_run": 3,
+        "decision_trace": [
+            {
+                "step": 1,
+                "patch_status": null,
+                "analyzer_findings": [],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_OR",
+                "reason": "No tests have been executed yet. No static patch-comparison finding context was supplied. The agent is starting with a boolean-based test.",
+                "test_input": "' OR '1'='1",
+                "test_outcome": "PASS",
+                "evidence_id": "8c568b42-a261-4f04-89a5-e966599cc84c",
+                "stop_reason": null
+            },
+            {
+                "step": 2,
+                "patch_status": null,
+                "analyzer_findings": [],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_COMMENT",
+                "reason": "No static patch-comparison finding context was supplied. The previous payload exploited the baseline but was blocked by the patched implementation. The agent is trying another boolean-based strategy to attempt to disprove the fix.",
+                "test_input": "' OR 1=1 --",
+                "test_outcome": "PASS",
+                "evidence_id": "364b445c-a34d-41dc-887d-e41c1559fec6",
+                "stop_reason": null
+            },
+            {
+                "step": 3,
+                "patch_status": null,
+                "analyzer_findings": [],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_ADMIN",
+                "reason": "No static patch-comparison finding context was supplied. The previous payload exploited the baseline but was blocked by the patched implementation. The agent is trying another boolean-based strategy to attempt to disprove the fix.",
+                "test_input": "admin' OR '1'='1' --",
+                "test_outcome": "PASS",
+                "evidence_id": "aa09d40d-b5e8-44ac-adc9-9e55e72516af",
+                "stop_reason": null
+            },
+            {
+                "step": 4,
+                "patch_status": null,
+                "analyzer_findings": [],
+                "action": "STOP_INCONCLUSIVE",
+                "strategy": null,
+                "reason": "The testing budget has been reached. The available evidence is not sufficient to verify the submitted patch.",
+                "test_input": null,
+                "test_outcome": null,
+                "evidence_id": null,
+                "stop_reason": "The testing budget has been reached. The available evidence is not sufficient to verify the submitted patch."
+            }
+        ]
+    }
+}
