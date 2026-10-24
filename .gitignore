@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.env
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Frontend
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+
+# Local data
+backend/data/*
+!backend/data/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
