@@ -1,8 +1,8 @@
 fastapi
 uvicorn[standard]
 pydantic
-<<<<<<< 
+
 pytest
-=======
+
 pytest
->>>>>>> 19e9b5c (Checkpoint before backend hardening)
+
