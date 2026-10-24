@@ -1,85 +1,54 @@
 {
-    "verification_id": "d6f6d9f6-f99a-4c5d-9b64-53449e8f756a",
+    "verification_id": "ed5cd498-3870-4d83-992c-1c55f5261b50",
     "verdict": "INCONCLUSIVE",
-    "summary": "The controlled demonstration completed, but it did not execute the submitted application. Real application dynamic verification is required to verify the patch.",
+    "summary": "Source code analysis was unsupported. Moriarty preserves uncertainty and cannot establish a verification verdict.",
     "verification_scope": "Simulated demonstration fixture only",
     "dynamic_verification_performed": false,
-    "target_type": "CONTROLLED_FIXTURE",
+    "target_type": "SUBMITTED_SOURCE_EXECUTION",
+    "target_provenance": "SOURCE_EXECUTION_UNSUPPORTED",
+    "submitted_source_executed": false,
+    "source_runtime_match": false,
+    "final_action": "STOP_INCONCLUSIVE",
+    "stopping_reason": "UNSUPPORTED_ANALYSIS",
     "analysis": {
         "supported": false,
         "vulnerability_type": null,
-        "findings": [],
+        "findings": [
+            {
+                "rule_id": "PYTHON_SYNTAX_ERROR",
+                "message": "Python syntax error: '(' was never closed",
+                "severity": "INFO",
+                "line": 3,
+                "evidence": null
+            }
+        ],
         "security_invariants": [],
-        "summary": "No original-versus-patched source comparison was supplied."
+        "summary": "Source code could not be analyzed because it contains a syntax error."
     },
-    "tests_executed": [
-        {
-            "test_id": "SQLI_DIFFERENTIAL_001",
-            "passed": true,
-            "outcome": "PASS",
-            "details": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it.",
-            "execution_time_ms": null,
-            "error": null
-        },
-        {
-            "test_id": "SQLI_DIFFERENTIAL_002",
-            "passed": true,
-            "outcome": "PASS",
-            "details": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it.",
-            "execution_time_ms": null,
-            "error": null
-        },
-        {
-            "test_id": "SQLI_DIFFERENTIAL_003",
-            "passed": true,
-            "outcome": "PASS",
-            "details": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it.",
-            "execution_time_ms": null,
-            "error": null
-        }
-    ],
+    "tests_executed": [],
     "evidence": [
         {
-            "evidence_id": "8c568b42-a261-4f04-89a5-e966599cc84c",
-            "test_id": "SQLI_DIFFERENTIAL_001",
-            "category": "CONTROLLED_DEMONSTRATION",
-            "description": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it. Vulnerable rows: 2. Patched rows: 0.",
+            "evidence_id": "a5b1bc32-ee64-4f1f-bff1-4fbc373fb1cb",
+            "test_id": "STATIC_PATCH_COMPARISON",
+            "category": "STATIC_ANALYSIS",
+            "description": "At least one source version could not be analyzed. The patch comparison is inconclusive.",
             "observed": {
-                "outcome": "PASS",
-                "passed": true,
-                "execution_time_ms": null,
-                "error": null
+                "status": "ANALYSIS_UNSUPPORTED",
+                "original_rule_ids": [
+                    "SQLI_UNSAFE_QUERY"
+                ],
+                "patched_rule_ids": [
+                    "PYTHON_SYNTAX_ERROR"
+                ],
+                "static_improvement_detected": false,
+                "dynamic_verification_performed": false,
+                "target_type": "STATIC_SOURCE",
+                "target_provenance": "SUBMITTED_SOURCE_AST",
+                "submitted_source_executed": false,
+                "source_runtime_match": true
             },
             "supports_verification": false,
-            "timestamp": "2026-10-24T07:43:33.647176+00:00"
-        },
-        {
-            "evidence_id": "364b445c-a34d-41dc-887d-e41c1559fec6",
-            "test_id": "SQLI_DIFFERENTIAL_002",
-            "category": "CONTROLLED_DEMONSTRATION",
-            "description": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it. Vulnerable rows: 2. Patched rows: 0.",
-            "observed": {
-                "outcome": "PASS",
-                "passed": true,
-                "execution_time_ms": null,
-                "error": null
-            },
-            "supports_verification": false,
-            "timestamp": "2026-10-24T07:43:33.647376+00:00"
-        },
-        {
-            "evidence_id": "aa09d40d-b5e8-44ac-adc9-9e55e72516af",
-            "test_id": "SQLI_DIFFERENTIAL_003",
-            "category": "CONTROLLED_DEMONSTRATION",
-            "description": "The baseline was vulnerable to the test payload, while the parameterized demonstration blocked it. Vulnerable rows: 2. Patched rows: 0.",
-            "observed": {
-                "outcome": "PASS",
-                "passed": true,
-                "execution_time_ms": null,
-                "error": null
-            },
-            "supports_verification": false,
-            "timestamp": "2026-10-24T07:43:33.647548+00:00"
+            "timestamp": "2026-10-24T12:07:01.660770+00:00"
         }
     ],
     "limitations": [
@@ -87,64 +56,100 @@
         "Controlled demonstration tests do not execute the submitted application.",
         "A VERIFIED verdict requires empirical evidence that directly supports the relevant security invariants.",
         "Verification scope is limited to the tested SQL query execution path.",
-        "A VERIFIED verdict requires empirical evidence from real application testing.",
         "Scope of verification is restricted to the specific SQL query execution path tested.",
         "Controlled demonstration tests executed against simulated fixtures; submitted application code was not executed."
     ],
-    "patch_comparison": null,
+    "patch_comparison": {
+        "status": "ANALYSIS_UNSUPPORTED",
+        "summary": "At least one source version could not be analyzed. The patch comparison is inconclusive.",
+        "original_analysis": {
+            "supported": true,
+            "vulnerability_type": "SQL_INJECTION",
+            "findings": [
+                {
+                    "rule_id": "SQLI_UNSAFE_QUERY",
+                    "message": "The SQL query is constructed dynamically using string concatenation, interpolation, or formatting. This may allow untrusted input to alter SQL structure.",
+                    "severity": "HIGH",
+                    "line": 3,
+                    "evidence": "\"SELECT id, username, role, email FROM users WHERE username = '\" + username + \"'\""
+                }
+            ],
+            "security_invariants": [
+                "SQL query structure must not be controlled by untrusted input.",
+                "User-controlled values should be passed through query parameters.",
+                "Required application functionality must remain intact."
+            ],
+            "summary": "Potentially unsafe SQL query construction was detected. Dynamic verification is required to determine exploitability."
+        },
+        "patched_analysis": {
+            "supported": false,
+            "vulnerability_type": null,
+            "findings": [
+                {
+                    "rule_id": "PYTHON_SYNTAX_ERROR",
+                    "message": "Python syntax error: '(' was never closed",
+                    "severity": "INFO",
+                    "line": 3,
+                    "evidence": null
+                }
+            ],
+            "security_invariants": [],
+            "summary": "Source code could not be analyzed because it contains a syntax error."
+        },
+        "original_rule_ids": [
+            "SQLI_UNSAFE_QUERY"
+        ],
+        "patched_rule_ids": [
+            "PYTHON_SYNTAX_ERROR"
+        ],
+        "static_improvement_detected": false,
+        "dynamic_verification_performed": false
+    },
     "agent": {
         "final_action": "STOP_INCONCLUSIVE",
-        "final_reason": "The testing budget has been reached. The available evidence is not sufficient to verify the submitted patch.",
-        "tests_run": 3,
+        "final_reason": "Static analysis was unsupported because source code could not be parsed or analyzed. Moriarty preserves uncertainty and avoids unsupported claims.",
+        "stopping_reason": "UNSUPPORTED_ANALYSIS",
+        "tests_run": 0,
         "decision_trace": [
             {
                 "step": 1,
-                "patch_status": null,
-                "analyzer_findings": [],
-                "action": "RUN_TEST",
-                "strategy": "BOOLEAN_OR",
-                "reason": "No tests have been executed yet. No static patch-comparison finding context was supplied. The agent is starting with a boolean-based test.",
-                "test_input": "' OR '1'='1",
-                "test_outcome": "PASS",
-                "evidence_id": "8c568b42-a261-4f04-89a5-e966599cc84c",
-                "stop_reason": null
-            },
-            {
-                "step": 2,
-                "patch_status": null,
-                "analyzer_findings": [],
-                "action": "RUN_TEST",
-                "strategy": "BOOLEAN_COMMENT",
-                "reason": "No static patch-comparison finding context was supplied. The previous payload exploited the baseline but was blocked by the patched implementation. The agent is trying another boolean-based strategy to attempt to disprove the fix.",
-                "test_input": "' OR 1=1 --",
-                "test_outcome": "PASS",
-                "evidence_id": "364b445c-a34d-41dc-887d-e41c1559fec6",
-                "stop_reason": null
-            },
-            {
-                "step": 3,
-                "patch_status": null,
-                "analyzer_findings": [],
-                "action": "RUN_TEST",
-                "strategy": "BOOLEAN_ADMIN",
-                "reason": "No static patch-comparison finding context was supplied. The previous payload exploited the baseline but was blocked by the patched implementation. The agent is trying another boolean-based strategy to attempt to disprove the fix.",
-                "test_input": "admin' OR '1'='1' --",
-                "test_outcome": "PASS",
-                "evidence_id": "aa09d40d-b5e8-44ac-adc9-9e55e72516af",
-                "stop_reason": null
-            },
-            {
-                "step": 4,
-                "patch_status": null,
-                "analyzer_findings": [],
+                "patch_status": "ANALYSIS_UNSUPPORTED",
+                "analyzer_findings": [
+                    "PYTHON_SYNTAX_ERROR"
+                ],
                 "action": "STOP_INCONCLUSIVE",
                 "strategy": null,
-                "reason": "The testing budget has been reached. The available evidence is not sufficient to verify the submitted patch.",
+                "reason": "Static analysis was unsupported because source code could not be parsed or analyzed. Moriarty preserves uncertainty and avoids unsupported claims.",
                 "test_input": null,
                 "test_outcome": null,
                 "evidence_id": null,
-                "stop_reason": "The testing budget has been reached. The available evidence is not sufficient to verify the submitted patch."
+                "stop_reason": "Static analysis was unsupported because source code could not be parsed or analyzed. Moriarty preserves uncertainty and avoids unsupported claims."
             }
-        ]
+        ],
+        "coverage": {
+            "tests_available": 40,
+            "tests_selected": 0,
+            "tests_executed": 0,
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "tests_inconclusive": 0,
+            "tests_not_applicable": 3,
+            "categories_covered": [],
+            "invariants_verified": [],
+            "remaining_coverage_gaps": [
+                "Quote and delimiter handling",
+                "Boolean-based SQL injection",
+                "Comment-based SQL injection",
+                "UNION-based SQL injection",
+                "Numeric parameter handling",
+                "LIKE-pattern behavior",
+                "Type confusion",
+                "Input encoding and normalization",
+                "Authentication query behavior",
+                "Database error handling",
+                "Legitimate functionality preservation"
+            ],
+            "coverage_percentage": 0.0
+        }
     }
 }

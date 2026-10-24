@@ -1,0 +1,223 @@
+{
+    "verification_id": "e53aeebd-e4d7-495b-99bc-54a596287545",
+    "verdict": "INCONCLUSIVE",
+    "summary": "Test execution encountered errors. The evidence is insufficient to verify the patch.",
+    "verification_scope": "Targeted local SQLite user search query path",
+    "dynamic_verification_performed": true,
+    "target_type": "SUBMITTED_SOURCE_EXECUTION",
+    "target_provenance": "RESTRICTED_SOURCE_ENV",
+    "submitted_source_executed": true,
+    "source_runtime_match": true,
+    "final_action": "STOP_FOR_INVESTIGATION",
+    "stopping_reason": "RUNTIME_ERROR",
+    "analysis": {
+        "supported": true,
+        "vulnerability_type": "SQL_INJECTION",
+        "findings": [
+            {
+                "rule_id": "SQLI_PARAMETERIZED_QUERY",
+                "message": "The SQL query appears to use parameterized execution. Verify that the query structure is static and that all untrusted values are passed as parameters.",
+                "severity": "INFO",
+                "line": 2,
+                "evidence": "'SELECT id, username, role, email FROM audit_logs WHERE log_level = ?'"
+            }
+        ],
+        "security_invariants": [
+            "SQL query structure must not be controlled by untrusted input.",
+            "User-controlled values should be passed through query parameters.",
+            "Required application functionality must remain intact."
+        ],
+        "summary": "Recognized SQL execution calls appear to use static query structures or parameterized execution. Dynamic verification is still required."
+    },
+    "tests_executed": [
+        {
+            "test_id": "SQLI_QUOTE_001",
+            "passed": false,
+            "outcome": "ERROR",
+            "details": "Local application test execution encountered an error: no such column: log_level",
+            "execution_time_ms": 0.039,
+            "error": "no such column: log_level",
+            "expected_behavior": "Patched target binds input strictly as data; returns 0 unauthorized rows.",
+            "observed_behavior": "Execution raised exception: no such column: log_level",
+            "baseline_exploitable": false,
+            "patch_blocks_payload": false,
+            "functionality_intact": false,
+            "category": "Quote and delimiter handling",
+            "security_invariant": "UNTRUSTED_INPUT_CANNOT_ESCAPE_STRING_DELIMITER"
+        }
+    ],
+    "evidence": [
+        {
+            "evidence_id": "787af3db-2320-4171-961c-eb0ae468c6eb",
+            "test_id": "STATIC_PATCH_COMPARISON",
+            "category": "STATIC_ANALYSIS",
+            "description": "The recognized unsafe SQL construction in the original source is absent from the patched source, and the patch contains a recognized static or parameterized SQL pattern. This is a static improvement signal, not dynamic verification.",
+            "observed": {
+                "status": "PATCH_PATTERN_IMPROVED",
+                "original_rule_ids": [
+                    "SQLI_UNSAFE_QUERY"
+                ],
+                "patched_rule_ids": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "static_improvement_detected": true,
+                "dynamic_verification_performed": false,
+                "target_type": "STATIC_SOURCE",
+                "target_provenance": "SUBMITTED_SOURCE_AST",
+                "submitted_source_executed": false,
+                "source_runtime_match": true
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T11:37:33.579186+00:00"
+        },
+        {
+            "evidence_id": "a89b96e7-18bf-43d4-8f0b-714780782955",
+            "test_id": "SQLI_QUOTE_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Local application test execution encountered an error: no such column: log_level",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR '1'='1",
+                "outcome": "ERROR",
+                "passed": false,
+                "baseline_exploitable": false,
+                "patch_blocks_payload": false,
+                "functionality_intact": false,
+                "vulnerable_rows_count": 0,
+                "patched_rows_count": 0,
+                "expected_behavior": "Patched target binds input strictly as data; returns 0 unauthorized rows.",
+                "observed_behavior": "Execution raised exception: no such column: log_level",
+                "execution_time_ms": 0.039,
+                "error": "no such column: log_level",
+                "test_category": "Quote and delimiter handling",
+                "security_invariant": "UNTRUSTED_INPUT_CANNOT_ESCAPE_STRING_DELIMITER",
+                "test_name": "Single Quote String Termination Tautology"
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T11:37:33.579318+00:00"
+        }
+    ],
+    "limitations": [
+        "Static source comparison does not establish runtime security.",
+        "Controlled demonstration tests do not execute the submitted application.",
+        "A VERIFIED verdict requires empirical evidence that directly supports the relevant security invariants.",
+        "Verification scope is limited to the tested SQL query execution path.",
+        "Scope of verification is restricted to the specific SQL query execution path tested."
+    ],
+    "patch_comparison": {
+        "status": "PATCH_PATTERN_IMPROVED",
+        "summary": "The recognized unsafe SQL construction in the original source is absent from the patched source, and the patch contains a recognized static or parameterized SQL pattern. This is a static improvement signal, not dynamic verification.",
+        "original_analysis": {
+            "supported": true,
+            "vulnerability_type": "SQL_INJECTION",
+            "findings": [
+                {
+                    "rule_id": "SQLI_UNSAFE_QUERY",
+                    "message": "The SQL query is constructed dynamically using string concatenation, interpolation, or formatting. This may allow untrusted input to alter SQL structure.",
+                    "severity": "HIGH",
+                    "line": 2,
+                    "evidence": "\"SELECT id, username, role, email FROM audit_logs WHERE log_level = '\" + log_level + \"'\""
+                }
+            ],
+            "security_invariants": [
+                "SQL query structure must not be controlled by untrusted input.",
+                "User-controlled values should be passed through query parameters.",
+                "Required application functionality must remain intact."
+            ],
+            "summary": "Potentially unsafe SQL query construction was detected. Dynamic verification is required to determine exploitability."
+        },
+        "patched_analysis": {
+            "supported": true,
+            "vulnerability_type": "SQL_INJECTION",
+            "findings": [
+                {
+                    "rule_id": "SQLI_PARAMETERIZED_QUERY",
+                    "message": "The SQL query appears to use parameterized execution. Verify that the query structure is static and that all untrusted values are passed as parameters.",
+                    "severity": "INFO",
+                    "line": 2,
+                    "evidence": "'SELECT id, username, role, email FROM audit_logs WHERE log_level = ?'"
+                }
+            ],
+            "security_invariants": [
+                "SQL query structure must not be controlled by untrusted input.",
+                "User-controlled values should be passed through query parameters.",
+                "Required application functionality must remain intact."
+            ],
+            "summary": "Recognized SQL execution calls appear to use static query structures or parameterized execution. Dynamic verification is still required."
+        },
+        "original_rule_ids": [
+            "SQLI_UNSAFE_QUERY"
+        ],
+        "patched_rule_ids": [
+            "SQLI_PARAMETERIZED_QUERY"
+        ],
+        "static_improvement_detected": true,
+        "dynamic_verification_performed": true
+    },
+    "agent": {
+        "final_action": "STOP_FOR_INVESTIGATION",
+        "final_reason": "A test encountered an execution error. The agent must investigate before continuing.",
+        "stopping_reason": "RUNTIME_ERROR",
+        "tests_run": 1,
+        "decision_trace": [
+            {
+                "step": 1,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_OR",
+                "reason": "Static analysis identified dynamic query construction, and the ML analyzer assigned a high risk score (0.56) to string-delimiter manipulation. The planner selected a quote-handling challenge to establish baseline exploitability before evaluating the patch.",
+                "test_input": "' OR '1'='1",
+                "test_outcome": "ERROR",
+                "evidence_id": "a89b96e7-18bf-43d4-8f0b-714780782955",
+                "stop_reason": null
+            },
+            {
+                "step": 2,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "STOP_FOR_INVESTIGATION",
+                "strategy": null,
+                "reason": "A test encountered an execution error. The agent must investigate before continuing.",
+                "test_input": null,
+                "test_outcome": null,
+                "evidence_id": null,
+                "stop_reason": "A test encountered an execution error. The agent must investigate before continuing."
+            }
+        ],
+        "coverage": {
+            "tests_available": 40,
+            "tests_selected": 1,
+            "tests_executed": 1,
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "tests_inconclusive": 1,
+            "tests_not_applicable": 3,
+            "categories_covered": [
+                "Quote and delimiter handling"
+            ],
+            "invariants_verified": [],
+            "remaining_coverage_gaps": [
+                "Boolean-based SQL injection",
+                "Comment-based SQL injection",
+                "UNION-based SQL injection",
+                "Numeric parameter handling",
+                "LIKE-pattern behavior",
+                "Type confusion",
+                "Input encoding and normalization",
+                "Authentication query behavior",
+                "Database error handling",
+                "Legitimate functionality preservation"
+            ],
+            "coverage_percentage": 9.1
+        }
+    }
+}

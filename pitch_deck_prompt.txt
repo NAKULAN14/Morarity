@@ -1,0 +1,1102 @@
+<USER_REQUEST>
+# MASTER PROMPT — CREATE A WORLD-CLASS HACKATHON PITCH DECK FOR MORIARTY
+
+## Role
+
+Act as an elite presentation designer, cybersecurity researcher, technical storyteller, startup pitch strategist, and hackathon presentation expert.
+
+Your task is to create a **world-class, competition-ready PowerPoint presentation** for our cybersecurity project, Moriarty.
+
+The presentation must be technically accurate, visually exceptional, memorable, and understandable to both technical and non-technical judges.
+
+Do not create a generic college project PPT.
+
+Create a presentation that feels like a combination of:
+
+- A premium cybersecurity product launch.
+- A technical research presentation.
+- A startup pitch deck.
+- A compelling live hackathon demonstration.
+
+The goal is to make judges understand the problem, appreciate the technical depth, recognize the novelty, and remember Moriarty after the presentation.
+
+---
+
+# PROJECT INFORMATION
+
+## Project Name
+
+**Moriarty**
+
+## Project Title
+
+**ML- and LLM-Assisted Adaptive Security Patch Verification Framework**
+
+## Core Tagline
+
+**"Don't trust the patch. Challenge it."**
+
+## One-Line Pitch
+
+Moriarty is an intelligent security verification framework that independently challenges security patches using ML-guided risk analysis, LLM-assisted reasoning, adaptive testing, and evidence-backed verification to determine whether a vulnerability has actually been fixed.
+
+## Core Problem
+
+Developers frequently fix vulnerabilities and assume the application is secure because:
+
+- The vulnerable code was modified.
+- A static analysis tool reports an improvement.
+- A patch generator produces a candidate fix.
+- A test case passes.
+- An ML model assigns a lower risk score.
+
+However, none of these alone proves that the vulnerability has been eliminated.
+
+A patch can:
+
+- Fix one vulnerability while leaving another attack path.
+- Introduce incomplete sanitization.
+- Change SQL query behavior.
+- Break legitimate functionality.
+- Pass predefined tests while failing on unfamiliar inputs.
+- Appear safe to the same system that generated it.
+
+Moriarty addresses this trust problem by independently analyzing and challenging candidate security patches.
+
+---
+
+# PROJECT ARCHITECTURE AND TECHNICAL DETAILS
+
+Use the following project information as the basis of the presentation.
+
+The final presentation must reflect the actual implementation in the repository.
+
+If any feature is not completed or cannot be verified, clearly label it as planned, experimental, or a limitation rather than claiming it is fully implemented.
+
+## 1. Generalized SQLite and Python Analysis
+
+Moriarty is designed to analyze:
+
+- Raw SQLite SQL statements.
+- Python source code using the Python `sqlite3` API.
+- Dynamic SQL construction.
+- SQL string concatenation.
+- F-strings.
+- `%` formatting.
+- `.format()`.
+- Parameterized queries.
+- Different database schemas.
+- Different table and column names.
+- Unfamiliar query structures.
+
+The system should not depend on predefined scenarios or fixed query templates.
+
+Explain why analyzing arbitrary SQL and Python code is more challenging than testing a fixed set of predefined examples.
+
+## 2. Machine Learning
+
+The existing ML system uses:
+
+- Character n-gram TF-IDF.
+- Logistic Regression.
+- SQL injection risk classification.
+- Risk score generation.
+- Detected feature extraction.
+- ML-guided test prioritization.
+
+The existing implementation report describes a curated dataset of 44 code samples.
+
+Reported metrics from the existing implementation report:
+
+- Stratified cross-validation accuracy: 90.0%.
+- Holdout accuracy: 81.8%.
+- Recall: 100.0%.
+- F1 score: 85.7%.
+
+These metrics are reported by the current implementation and must not be presented as independently validated research results.
+
+If the final implementation has updated metrics, use the actual latest results instead.
+
+Clearly explain that the ML model is advisory and cannot independently declare a patch secure.
+
+## 3. LLM-Assisted Security Reasoning
+
+The planned or implemented LLM integration should assist with:
+
+- Understanding unfamiliar SQL/Python structures.
+- Generating security hypotheses.
+- Explaining suspicious code.
+- Suggesting additional verification tests.
+- Identifying potential patch weaknesses.
+- Explaining verification evidence.
+- Generating readable audit summaries.
+
+The LLM must not independently determine the final security verdict.
+
+Every generated test or patch must be independently validated.
+
+If the LLM integration is completed, describe the actual provider and capabilities.
+
+If not, label it as a planned capability.
+
+## 4. Adaptive Test Planner
+
+Moriarty includes:
+
+- Rule-based planning.
+- ML-guided planning.
+- Adaptive test prioritization.
+- Test selection based on detected risk and code features.
+- Explainable planning decisions.
+- Planner benchmarking.
+
+Explain how the planner selects tests based on the actual code instead of blindly executing a fixed payload list.
+
+## 5. Patch Generation and Refinement
+
+Moriarty includes an AST-based patch generation and refinement workflow.
+
+The process includes:
+
+1. Candidate patch generation.
+2. Independent candidate analysis.
+3. ML risk evaluation.
+4. Static analysis.
+5. Identification of unresolved issues.
+6. Bounded patch refinement.
+7. Candidate history and diff tracking.
+8. Independent dynamic verification.
+
+The patch generator must not verify its own patch.
+
+This independence is a major design principle and should be clearly emphasized.
+
+## 6. Dynamic Verification
+
+Moriarty uses controlled SQLite verification to challenge patches.
+
+Explain:
+
+- How tests are selected.
+- How verification targets are created.
+- How dynamic behavior is observed.
+- How functionality preservation is checked.
+- How evidence is collected.
+- How results are used to determine the verdict.
+
+Mention SQLite driver restrictions where relevant, including the fact that Python's standard `sqlite3` `execute()` does not support executing multiple SQL statements in one call.
+
+Do not claim that Moriarty verifies every vulnerability class or guarantees application-wide security.
+
+## 7. Evidence Graph
+
+The evidence graph connects:
+
+- Source code.
+- Parsed SQL/Python structure.
+- Security findings.
+- ML risk assessment.
+- LLM hypotheses.
+- Adaptive test decisions.
+- Generated tests.
+- Executed tests.
+- Evidence records.
+- Candidate patches.
+- Final verdicts.
+
+Explain how this creates traceability and helps prevent unsupported security claims.
+
+Distinguish between:
+
+- Predicted findings.
+- Suggested tests.
+- Executed tests.
+- Confirmed evidence.
+
+Do not claim the evidence graph is implemented unless the final project contains it.
+
+## 8. Verdict System
+
+Moriarty uses three verdicts:
+
+### VERIFIED
+
+The security claim is supported by the required verification evidence.
+
+### REJECTED
+
+Evidence demonstrates that the security claim is false, such as a patch that remains exploitable.
+
+### INCONCLUSIVE
+
+The available evidence is insufficient to establish the result.
+
+Explain why `INCONCLUSIVE` is an important feature rather than a failure.
+
+Moriarty should not invent certainty when verification is incomplete.
+
+## 9. Existing Implementation
+
+The current implementation report describes:
+
+- 40 SQL injection test cases.
+- 12 test categories.
+- 112 backend tests passing.
+- Frontend TypeScript compilation and production build passing.
+- ML risk visualization.
+- Patch refinement interface.
+- Planner benchmarking.
+- SQL Security Lab.
+- New Verification workspace.
+- Archive workspace.
+
+These are historical reported results.
+
+Use the latest actual test results from the final repository if available.
+
+Do not fabricate test results.
+
+---
+
+# PRESENTATION OBJECTIVE
+
+Create a complete PowerPoint presentation that answers:
+
+1. What is Moriarty?
+2. What problem are we solving?
+3. Why is this problem important?
+4. Why are existing approaches insufficient?
+5. What is our proposed solution?
+6. How does Moriarty work?
+7. What technologies did we use?
+8. How does the ML model work?
+9. What does the LLM contribute?
+10. How does adaptive testing work?
+11. How are patches generated and refined?
+12. How is verification performed independently?
+13. How does the evidence graph improve trust?
+14. What makes Moriarty different?
+15. What are our measurable results?
+16. How does the actual website work?
+17. What are the limitations?
+18. What is the future scope?
+19. Why should judges consider Moriarty innovative?
+
+The presentation must be comprehensive but not overloaded.
+
+Use a strong narrative instead of dumping every feature onto slides.
+
+---
+
+# SLIDE-BY-SLIDE STRUCTURE
+
+Create approximately 16–18 slides.
+
+Use the following structure as the foundation. You may improve the ordering if it creates a stronger narrative, but do not omit important technical content.
+
+## SLIDE 1 — TITLE SLIDE
+
+Title:
+
+**MORIARTY**
+
+Subtitle:
+
+**ML- and LLM-Assisted Adaptive Security Patch Verification**
+
+Tagline:
+
+**Don't trust the patch. Challenge it.**
+
+Include:
+
+- Team name placeholder.
+- Team member placeholders.
+- Hackathon name placeholder.
+- Institution placeholder.
+
+Visual direction:
+
+A premium dark cybersecurity aesthetic.
+
+Use a subtle visual metaphor of a security patch being challenged by an intelligent verification system.
+
+Avoid generic stock images of hackers in hoodies.
+
+The slide should look like the opening of a serious cybersecurity product presentation.
+
+---
+
+## SLIDE 2 — THE PROBLEM
+
+Title:
+
+**A Patch Is Not Proof**
+
+Explain the core issue:
+
+Developers fix a vulnerability, but how do they know the vulnerability is actually gone?
+
+Show the gap between:
+
+```text
+Vulnerability Found
+        |
+     Patch Applied
+        |
+  Tests Pass?
+        |
+ Security Assumed
+```
+
+Highlight the weakness:
+
+**Passing a test does not prove that a vulnerability has been eliminated.**
+
+Use a strong visual and minimal text.
+
+---
+
+## SLIDE 3 — WHY EXISTING APPROACHES FALL SHORT
+
+Title:
+
+**Verification Has a Trust Problem**
+
+Compare traditional approaches:
+
+| Approach | Limitation |
+|---|---|
+| Static analysis | Identifies patterns but may not prove runtime behavior |
+| Unit tests | Usually test known scenarios |
+| ML classifier | Predicts risk, does not prove exploitability |
+| Patch generator | Can produce incomplete fixes |
+| Fixed payload lists | May miss unfamiliar query structures |
+| Self-verification | Risks trusting the same assumptions that produced the patch |
+
+Make the key point:
+
+**The system that creates a patch should not be the only system that approves it.**
+
+Use a clean visual comparison rather than a dense table if it improves the slide.
+
+---
+
+## SLIDE 4 — OUR SOLUTION
+
+Title:
+
+**Meet Moriarty**
+
+Introduce Moriarty as an independent security verification framework.
+
+Explain the approach:
+
+- Analyze the original code.
+- Identify potential SQL injection risks.
+- Use ML to prioritize suspicious behavior.
+- Use LLM reasoning to formulate additional hypotheses.
+- Adaptively select verification tests.
+- Generate or refine candidate patches.
+- Independently challenge candidate patches.
+- Collect evidence.
+- Produce an evidence-backed verdict.
+
+Visual:
+
+A central Moriarty system connected to analysis, patching, verification, and evidence components.
+
+---
+
+## SLIDE 5 — SYSTEM ARCHITECTURE
+
+Title:
+
+**Inside Moriarty**
+
+Create a clear, large architecture diagram.
+
+Include:
+
+- Raw SQLite SQL input.
+- Python `sqlite3` input.
+- SQLite parser.
+- Python AST analysis.
+- Static analysis.
+- Data-flow analysis.
+- ML risk analyzer.
+- LLM reasoning layer.
+- Adaptive test planner.
+- Dynamic verification.
+- Patch generator.
+- Patch refinement loop.
+- Evidence graph.
+- Verdict engine.
+- Reports.
+
+Show the relationship between original-source analysis and candidate-patch analysis.
+
+Clearly distinguish the patch generation branch from the independent verification branch.
+
+Use readable labels and clear arrows.
+
+Do not use a tiny diagram with unreadable text.
+
+---
+
+## SLIDE 6 — GENERALIZED SQL AND PYTHON ANALYSIS
+
+Title:
+
+**Beyond Predefined Scenarios**
+
+Explain that Moriarty is designed to analyze arbitrary supported SQLite SQL and Python `sqlite3` code.
+
+Show examples of query construction:
+
+```python
+query = "SELECT * FROM users WHERE name = '" + name + "'"
+```
+
+```python
+query = f"SELECT * FROM users WHERE name = '{name}'"
+```
+
+```python
+cursor.execute(
+    "SELECT * FROM users WHERE name = ?",
+    (name,)
+)
+```
+
+Explain how Moriarty distinguishes unsafe dynamic query construction from safe parameterized queries.
+
+Do not imply that raw SQL by itself always establishes an SQL injection vulnerability.
+
+Include a small visual illustrating:
+
+- Unsafe string construction.
+- Safe parameter binding.
+
+---
+
+## SLIDE 7 — ML RISK ANALYSIS
+
+Title:
+
+**Machine Learning as a Security Signal**
+
+Explain the ML pipeline:
+
+```text
+Source Code
+    |
+Character N-Gram TF-IDF
+    |
+Logistic Regression
+    |
+Risk Score + Detected Features
+    |
+Adaptive Test Prioritization
+```
+
+Explain:
+
+- Why character n-grams are useful for SQL syntax patterns.
+- How the model classifies suspicious query construction.
+- How the risk score guides test prioritization.
+- Why the ML model is advisory.
+
+Include actual evaluation metrics only if available and clearly label their source.
+
+Use a clean model pipeline visualization.
+
+---
+
+## SLIDE 8 — LLM SECURITY REASONING
+
+Title:
+
+**Reasoning Beyond Known Patterns**
+
+Explain the role of the LLM.
+
+Show:
+
+```text
+Parsed Code + ML Findings
+           |
+     LLM Reasoning
+           |
+  Security Hypotheses
+           |
+  Suggested Test Cases
+           |
+Independent Validation
+```
+
+Highlight:
+
+- Unfamiliar code interpretation.
+- Security hypothesis generation.
+- Additional test suggestions.
+- Patch weakness explanations.
+- Evidence summaries.
+
+Clearly state:
+
+**The LLM proposes. Moriarty verifies.**
+
+Do not present the LLM as an autonomous security authority.
+
+---
+
+## SLIDE 9 — ADAPTIVE TEST PLANNING
+
+Title:
+
+**Challenge the Patch Intelligently**
+
+Explain how Moriarty chooses verification tests.
+
+Show the difference between:
+
+### Fixed Testing
+
+Execute the same predefined tests for every input.
+
+### Adaptive Testing
+
+Select tests based on:
+
+- SQL structure.
+- Static analysis findings.
+- ML risk features.
+- LLM-generated hypotheses.
+- Previous test outcomes.
+- Remaining verification uncertainty.
+
+Use a visual example showing how a test plan changes for different code patterns.
+
+---
+
+## SLIDE 10 — PATCH GENERATION AND REFINEMENT
+
+Title:
+
+**Generate. Analyze. Refine. Challenge.**
+
+Show the full workflow:
+
+```text
+Original Vulnerable Code
+          |
+     Patch Generator
+          |
+    Candidate Patch
+          |
+ Independent Analysis
+          |
+ ML + Static + LLM Analysis
+          |
+ Remaining Issues?
+          |
+ Bounded Refinement Loop
+          |
+ Independent Verification
+```
+
+Explain:
+
+- Candidate generation.
+- AST transformations.
+- Independent re-analysis.
+- Refinement attempts.
+- Candidate history.
+- Patch diff.
+- Functionality preservation.
+
+Make the independence of the verifier visually prominent.
+
+---
+
+## SLIDE 11 — EVIDENCE GRAPH
+
+Title:
+
+**Every Verdict Has a Trail**
+
+Show how Moriarty connects:
+
+```text
+Source
+  |
+Finding
+  |
+Risk Assessment
+  |
+Test Decision
+  |
+Executed Test
+  |
+Evidence
+  |
+Verdict
+```
+
+Explain why this matters:
+
+- Traceability.
+- Transparency.
+- Auditability.
+- Reproducibility.
+- Reduced unsupported claims.
+
+Clearly distinguish suggested tests from executed tests.
+
+Use a visual graph rather than a text-heavy slide.
+
+---
+
+## SLIDE 12 — VERDICT SYSTEM
+
+Title:
+
+**Three Outcomes. No False Certainty.**
+
+Create three visually distinct sections:
+
+### VERIFIED
+
+The relevant security claim is supported by required evidence.
+
+### REJECTED
+
+Evidence demonstrates that the security claim is false.
+
+### INCONCLUSIVE
+
+The available evidence is insufficient.
+
+Explain why `INCONCLUSIVE` is a deliberate integrity mechanism.
+
+The system should never invent certainty simply to produce a satisfying result.
+
+---
+
+## SLIDE 13 — WHAT MAKES MORIARTY DIFFERENT?
+
+Title:
+
+**Not Another SQL Injection Scanner**
+
+Create a compelling differentiation slide.
+
+Compare Moriarty with conventional approaches across:
+
+- ML-assisted risk analysis.
+- LLM-assisted reasoning.
+- Adaptive testing.
+- Independent patch verification.
+- Automated patch refinement.
+- Evidence graph.
+- Differential analysis.
+- Verdict integrity.
+- Generalized SQLite/Python analysis.
+
+Avoid unsupported claims such as:
+
+- First ever.
+- Completely unique.
+- 100% accurate.
+- Guaranteed secure.
+- Detects every vulnerability.
+
+Explain Moriarty's differentiation through its architecture and workflow rather than marketing exaggeration.
+
+Core message:
+
+**Moriarty does not simply find vulnerabilities or generate patches. It independently challenges security claims and evaluates them using evidence.**
+
+---
+
+## SLIDE 14 — WEBSITE / PRODUCT DEMONSTRATION
+
+Title:
+
+**From Architecture to Working System**
+
+This slide must be designed around actual website screenshots.
+
+Create large screenshot placeholders for:
+
+- SQL Security Lab.
+- ML Security Analysis Bar.
+- Patch Refinement Drawer.
+- Adaptive Test Trace.
+- Planner Benchmark.
+- Architecture Workspace.
+- Evidence Graph.
+
+Do not generate fake screenshots.
+
+Create clearly labeled placeholder frames that I can replace with screenshots from the actual website.
+
+The placeholders should be large enough to show the UI clearly.
+
+Use a clean composition with two or three screenshot areas rather than a crowded collage.
+
+---
+
+## SLIDE 15 — LIVE DEMO WORKFLOW
+
+Title:
+
+**Watch Moriarty Challenge a Patch**
+
+Create a clear live demonstration sequence:
+
+1. Submit vulnerable Python SQLite code.
+2. Observe static analysis.
+3. Observe ML risk assessment.
+4. Inspect LLM reasoning, if enabled.
+5. Observe adaptive test selection.
+6. Generate a candidate patch.
+7. Independently re-analyze the patch.
+8. Run dynamic verification.
+9. Inspect evidence.
+10. Observe the final verdict.
+
+Include a screenshot placeholder for the live demo interface.
+
+Make this slide easy to present verbally.
+
+---
+
+## SLIDE 16 — EVALUATION AND RESULTS
+
+Title:
+
+**Measured, Not Assumed**
+
+Include the actual evaluation results from the completed project.
+
+Potential metrics:
+
+- ML precision.
+- ML recall.
+- F1 score.
+- False-positive rate.
+- Number of tests executed.
+- Test category coverage.
+- Verification time.
+- Patch refinement attempts.
+- Functionality preservation.
+- Inconclusive rate.
+- Planner comparison.
+- LLM-assisted test performance.
+
+Use charts only when actual data is available.
+
+If results are not yet available, create clearly labeled placeholders:
+
+`[Insert Actual Metric]`
+
+Do not invent performance improvements.
+
+Do not claim that ML-guided or LLM-assisted planning is superior unless measured results demonstrate it.
+
+Clearly distinguish:
+
+- Training metrics.
+- Validation metrics.
+- Holdout metrics.
+- Benchmark results.
+
+---
+
+## SLIDE 17 — LIMITATIONS AND FUTURE SCOPE
+
+Title:
+
+**What We Have Built. What Comes Next.**
+
+Include actual limitations, such as:
+
+- SQLite-specific verification scope.
+- Python `sqlite3` execution constraints.
+- Dynamic verification requiring sufficient context.
+- ML dataset size.
+- LLM dependency and latency.
+- Unsupported Python constructs.
+- Limited verification scope for unrelated vulnerability classes.
+
+Future scope may include:
+
+- Broader database engine support.
+- Larger evaluation datasets.
+- Stronger data-flow analysis.
+- Improved LLM-assisted reasoning.
+- More advanced verification strategies.
+- CI/CD integration.
+- Security audit reporting.
+- Broader language support.
+
+Clearly distinguish implemented capabilities from future plans.
+
+---
+
+## SLIDE 18 — CLOSING
+
+Title:
+
+**Don't Trust the Patch. Challenge It.**
+
+Conclude with a strong statement:
+
+**Moriarty turns security patch verification from an assumption into an evidence-backed process.**
+
+Include:
+
+- Project name.
+- Team name.
+- Team members.
+- GitHub placeholder.
+- Demo URL placeholder.
+- QR code placeholder, if appropriate.
+
+Keep the slide visually striking and minimal.
+
+End with a memorable message.
+
+---
+
+# VISUAL DESIGN SYSTEM
+
+## Overall Style
+
+Use a premium dark cybersecurity aesthetic.
+
+The visual style should feel like a modern security product, not a traditional college presentation.
+
+Use:
+
+- Deep black backgrounds.
+- Dark charcoal surfaces.
+- Subtle grid patterns.
+- Thin technical borders.
+- Carefully used green accents.
+- Blue accents for data flow.
+- High-contrast typography.
+- Clean technical diagrams.
+- Large visual elements.
+- Minimal but meaningful text.
+
+Suggested palette:
+
+- Background: `#07090B`
+- Surface: `#0C1013`
+- Border: `#222B30`
+- Primary accent: `#39E58C`
+- Secondary accent: `#38BDF8`
+- Main text: `#F3F4F6`
+- Secondary text: `#9CA3AF`
+
+Use consistent typography throughout the deck.
+
+Use a modern sans-serif font for headings and body text.
+
+Use monospace typography only for code, architecture labels, and technical identifiers.
+
+## Slide Layout Rules
+
+- Use a 16:9 widescreen layout.
+- Use consistent margins.
+- Use strong visual hierarchy.
+- Avoid dense paragraphs.
+- Avoid tiny fonts.
+- Avoid excessive bullet points.
+- Avoid unnecessary decorative icons.
+- Avoid generic stock cybersecurity images.
+- Avoid repeated slide layouts.
+- Use diagrams to explain technical concepts.
+- Use code snippets only when they add value.
+- Use screenshots as evidence of the actual implementation.
+
+Every slide should have one primary message.
+
+---
+
+# WEBSITE SCREENSHOT PLACEHOLDERS
+
+This is a critical requirement.
+
+I will provide screenshots of the actual Moriarty website separately.
+
+Until those screenshots are available, create editable screenshot placeholders.
+
+Use labels such as:
+
+- `[INSERT MORIARTY DASHBOARD SCREENSHOT]`
+- `[INSERT SQL SECURITY LAB SCREENSHOT]`
+- `[INSERT ML ANALYSIS SCREENSHOT]`
+- `[INSERT PATCH REFINEMENT SCREENSHOT]`
+- `[INSERT ADAPTIVE TEST TRACE SCREENSHOT]`
+- `[INSERT ARCHITECTURE WORKSPACE SCREENSHOT]`
+- `[INSERT EVIDENCE GRAPH SCREENSHOT]`
+- `[INSERT PLANNER BENCHMARK SCREENSHOT]`
+
+Requirements:
+
+1. Do not invent website screenshots.
+2. Do not generate fake UI screenshots.
+3. Do not use unrelated stock images in place of screenshots.
+4. Create large, clearly labeled, editable screenshot frames.
+5. Preserve the intended aspect ratio of the screenshot.
+6. Make it easy to replace each placeholder with an actual image.
+7. Use a subtle border or placeholder treatment consistent with the deck.
+8. Do not allow placeholders to dominate every slide.
+9. Reserve screenshots for slides where they add real value.
+10. Leave space for actual screenshots from the completed project.
+
+If actual screenshots are supplied, use them directly.
+
+Do not alter the website's appearance or fabricate interface elements.
+
+---
+
+# TECHNICAL DIAGRAM REQUIREMENTS
+
+Create high-quality diagrams for:
+
+1. Complete Moriarty system architecture.
+2. ML classification pipeline.
+3. LLM reasoning pipeline.
+4. Adaptive test planning.
+5. Patch generation and refinement.
+6. Independent verification.
+7. Evidence graph.
+8. Verdict generation.
+9. Data flow between frontend and backend.
+10. Evaluation and benchmarking architecture.
+
+Diagrams must be readable.
+
+Use clean arrows and clear component labels.
+
+Avoid diagrams that contain excessive text or become unreadable when projected.
+
+For the main architecture slide, make the independence of the patch generator and verifier visually obvious.
+
+---
+
+# CONTENT ACCURACY RULES
+
+The presentation must be grounded in the actual project.
+
+Do not invent:
+
+- Technologies.
+- Libraries.
+- API endpoints.
+- Models.
+- Features.
+- Evaluation results.
+- Performance improvements.
+- Dataset sizes.
+- Security guarantees.
+- User statistics.
+- Deployment details.
+
+Use the actual implementation details from the repository when available.
+
+If a capability is incomplete, label it clearly.
+
+If a metric is unavailable, use a placeholder rather than inventing a number.
+
+Clearly distinguish:
+
+- Implemented.
+- Experimental.
+- Planned.
+- Future scope.
+
+Do not claim that Moriarty guarantees security.
+
+Do not claim that a lower ML risk score proves a patch is secure.
+
+Do not claim that an LLM independently verifies vulnerabilities.
+
+Do not claim that passing a limited set of tests proves complete security.
+
+---
+
+# PRESENTATION STORYTELLING REQUIREMENTS
+
+The presentation must tell a compelling story.
+
+The audience should understand the following progression:
+
+1. Security patches are not automatically trustworthy.
+2. Existing approaches have limitations.
+3. Moriarty independently challenges patches.
+4. ML helps identify and prioritize risk.
+5. LLM reasoning helps formulate hypotheses.
+6. Adaptive testing challenges the actual code.
+7. Patch refinement improves candidate fixes.
+8. Independent verification tests those fixes.
+9. The evidence graph records what actually happened.
+10. The verdict engine makes an evidence-backed decision.
+
+The technical novelty should emerge naturally from the architecture.
+
+Do not rely on exaggerated marketing language.
+
+The presentation should communicate confidence through technical clarity, evidence, and strong visual design.
+
+---
+
+# FINAL DELIVERABLE
+
+Create a complete, editable PowerPoint presentation.
+
+The presentation must include:
+
+- Complete project explanation.
+- Problem statement.
+- Motivation.
+- Existing limitations.
+- Proposed solution.
+- Full architecture.
+- Technology stack.
+- ML explanation.
+- LLM explanation.
+- Adaptive testing.
+- Patch generation.
+- Patch refinement.
+- Independent verification.
+- Evidence graph.
+- Verdict system.
+- Differentiation.
+- Website screenshot placeholders.
+- Live demo workflow.
+- Evaluation and results.
+- Limitations.
+- Future scope.
+- Closing slide.
+
+Do not stop after generating a slide outline.
+
+Create the actual PowerPoint file.
+
+Ensure the deck is visually polished, technically accurate, editable, and ready for a hackathon presentation.
+
+The final deck should be compelling enough to make judges understand not only what Moriarty does, but why its architecture matters.
+
+**The central message of the entire presentation must remain:**
+
+# Don't trust the patch. Challenge it. Verify it with evidence.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-24T17:14:15+05:30.
+</ADDITIONAL_METADATA>

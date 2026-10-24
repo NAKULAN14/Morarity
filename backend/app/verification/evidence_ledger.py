@@ -85,6 +85,9 @@ class EvidenceLedger:
             "observed_behavior": getattr(result, "observed_behavior", ""),
             "execution_time_ms": getattr(result, "execution_time_ms", None),
             "error": getattr(result, "error", None),
+            "test_category": getattr(result, "category", None),
+            "security_invariant": getattr(result, "security_invariant", None),
+            "test_name": getattr(result, "test_name", None),
         }
 
         evidence = Evidence(

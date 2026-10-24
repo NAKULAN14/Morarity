@@ -1,15 +1,15 @@
 import React from 'react';
-import { Shield, Activity, Terminal, FolderClock, Layers, RefreshCw } from 'lucide-react';
+import { Shield, Activity, Terminal, FolderClock, Layers, RefreshCw, Sparkles } from 'lucide-react';
 import { BackendHealth } from '../types';
 
 interface NavbarProps {
-  activeTab: 'overview' | 'verify' | 'results' | 'reports';
-  setActiveTab: (tab: 'overview' | 'verify' | 'results' | 'reports') => void;
+  activeTab: 'overview' | 'sqllab' | 'verify' | 'results' | 'reports' | 'architecture';
+  setActiveTab: (tab: 'overview' | 'sqllab' | 'verify' | 'results' | 'reports' | 'architecture') => void;
   health: BackendHealth | null;
   healthLoading: boolean;
   onRefreshHealth: () => void;
   hasActiveResult: boolean;
-  onOpenArchitecture: () => void;
+  onOpenArchitecture?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -65,6 +65,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             <button
+              onClick={() => setActiveTab('sqllab')}
+              className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1.5 ${
+                activeTab === 'sqllab'
+                  ? 'bg-[#1E1B4B] text-[#C084FC] border border-[#6366F1]/50'
+                  : 'text-[#8B989E] hover:text-[#C084FC] hover:bg-[#0C1013]'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#C084FC]" />
+              <span className="font-bold">SQL Security Lab</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('verify')}
               className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1.5 ${
                 activeTab === 'verify'
@@ -101,39 +113,47 @@ export const Navbar: React.FC<NavbarProps> = ({
               <FolderClock className="w-3.5 h-3.5" />
               <span>Archive</span>
             </button>
+
+            <button
+              onClick={() => setActiveTab('architecture')}
+              className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1.5 ${
+                activeTab === 'architecture'
+                  ? 'bg-[#11171B] text-[#39E58C] border border-[#39E58C]/40 font-bold'
+                  : 'text-[#8B989E] hover:text-[#E8EEF0] hover:bg-[#0C1013]'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5 text-[#39E58C]" />
+              <span>Architecture</span>
+            </button>
           </nav>
 
           {/* Right Status & Tools */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={onOpenArchitecture}
-              className="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-xs rounded border border-[#222B30] text-[#8B989E] hover:text-[#E8EEF0] hover:bg-[#0C1013] transition-colors"
-              title="View verification engine architecture"
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>Architecture</span>
-            </button>
-
-            {/* Backend Connection Indicator */}
-            <div
-              className={`flex items-center gap-2 px-2.5 py-1 rounded text-xs font-mono border ${
-                health
-                  ? 'bg-[#0B2418]/60 border-[#39E58C]/30 text-[#39E58C]'
-                  : 'bg-[#2B1014]/60 border-[#FF5B64]/30 text-[#FF5B64]'
-              }`}
-            >
-              <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  health ? 'bg-[#39E58C] animate-pulse' : 'bg-[#FF5B64]'
+            {/* Backend Health Indicator */}
+            <div className="flex items-center gap-2 pl-3 border-l border-[#222B30]">
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  healthLoading
+                    ? 'bg-[#FFBE55] animate-ping'
+                    : health
+                    ? 'bg-[#39E58C] shadow-[0_0_8px_#39E58C]'
+                    : 'bg-[#FF5B64] shadow-[0_0_8px_#FF5B64]'
                 }`}
               />
-              <span className="hidden sm:inline">
-                {health ? `ENGINE LIVE (${health.ping_ms}ms)` : 'ENGINE OFFLINE'}
-              </span>
+              <div className="hidden sm:flex flex-col text-right">
+                <span className="text-[10px] font-mono text-[#E8EEF0] leading-none">
+                  {healthLoading ? 'CHECKING...' : health ? 'ENGINE ONLINE' : 'ENGINE OFFLINE'}
+                </span>
+                {health?.ping_ms !== undefined && (
+                  <span className="text-[9px] font-mono text-[#536168] mt-0.5">
+                    {health.ping_ms}ms • SQLite Sandbox
+                  </span>
+                )}
+              </div>
               <button
                 onClick={onRefreshHealth}
                 disabled={healthLoading}
-                className="hover:opacity-75 focus:outline-none ml-0.5"
+                className="p-1 rounded text-[#536168] hover:text-[#E8EEF0] hover:bg-[#11171B] transition-colors disabled:opacity-50"
                 title="Refresh backend status"
               >
                 <RefreshCw className={`w-3 h-3 ${healthLoading ? 'animate-spin' : ''}`} />

@@ -29,6 +29,9 @@ class SQLInjectionAnalyzer:
         "DROP",
         "ALTER",
         "PRAGMA",
+        "WITH",
+        "BEGIN",
+        "EXPLAIN",
     )
 
     def analyze(self, source_code: str) -> AnalysisResult:
@@ -220,18 +223,21 @@ class SQLInjectionAnalyzer:
 
     def _is_dynamic_query(self, node: ast.AST) -> bool:
         """
-        Identify common forms of dynamically constructed SQL.
+        Identify common forms of dynamically constructed SQL, including
+        f-strings, string concatenation (+), %-formatting, and .format().
         """
-
         if isinstance(node, ast.JoinedStr):
             return True
 
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
             return self._contains_string_literal(node)
 
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Mod):
+            return self._contains_string_literal(node)
+
         if isinstance(node, ast.Call):
             if isinstance(node.func, ast.Attribute):
-                if node.func.attr == "format":
+                if node.func.attr in {"format", "replace"}:
                     return True
 
             if isinstance(node.func, ast.Name):
@@ -321,18 +327,21 @@ class _SQLQueryVisitor(ast.NodeVisitor):
 
         self.generic_visit(node)
 
+    def _resolve_node(self, node: Optional[ast.AST], depth: int = 0) -> Optional[ast.AST]:
+        """Recursively resolve variable assignments in local data-flow."""
+        if depth > 8 or node is None:
+            return node
+        if isinstance(node, ast.Name) and node.id in self.assignments:
+            return self._resolve_node(self.assignments[node.id], depth + 1)
+        return node
+
     def visit_Call(self, node: ast.Call) -> None:
         if (
             isinstance(node.func, ast.Attribute)
             and node.func.attr in SQLInjectionAnalyzer.SQL_EXECUTION_METHODS
         ):
             query_node = node.args[0] if node.args else None
-
-            if isinstance(query_node, ast.Name):
-                query_node = self.assignments.get(
-                    query_node.id,
-                    query_node,
-                )
+            query_node = self._resolve_node(query_node)
 
             self.queries.append(
                 _SQLQuery(

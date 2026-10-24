@@ -2,7 +2,7 @@ import json
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 from uuid import uuid4
 
 from app.agent.planner import AgentPlanner
@@ -19,15 +19,22 @@ from app.execution.source_executor import (
     SourceBoundUserApp,
     verify_target_provenance,
 )
+from app.llm.reasoner import LLMSecurityReasoner
+from app.ml.ml_analyzer import SQLInjectionMLAnalyzer
 from app.models.schemas import (
     AnalysisResult,
     Evidence,
+    EvidenceGraphData,
     FunctionalityInvariant,
+    LLMReasoningResult,
+    MLAnalysisResult,
     TestResult,
     Verdict,
+    VerificationCoverage,
     VerificationResponse,
 )
 from app.reporting.report_generator import ReportGenerator
+from app.verification.evidence_graph import EvidenceGraph
 from app.verification.evidence_ledger import EvidenceLedger
 from app.verification.verdict_engine import VerdictEngine
 from app.verification.patch_comparator import (
@@ -53,6 +60,11 @@ class AgentLoopResult:
     dynamic_verification_performed: bool = False
     stopping_reason: Optional[str] = None
     verification_response: Optional[VerificationResponse] = None
+    coverage: Optional[VerificationCoverage] = None
+    original_ml_analysis: Optional[Any] = None
+    patched_ml_analysis: Optional[Any] = None
+    llm_reasoning: Optional[LLMReasoningResult] = None
+    evidence_graph: Optional[EvidenceGraphData] = None
 
 
 class MoriartyAgentLoop:
@@ -64,14 +76,17 @@ class MoriartyAgentLoop:
     and computes an explainable verdict with rigorous source-to-runtime integrity.
     """
 
-    def __init__(self, max_tests: int = 3) -> None:
+    def __init__(self, max_tests: int = 3, planner: Optional[AgentPlanner] = None) -> None:
         self.max_tests = max_tests
-        self.planner = AgentPlanner(max_tests=max_tests)
+        self.planner = planner or AgentPlanner(max_tests=max_tests)
+        self.ml_analyzer = SQLInjectionMLAnalyzer()
         self.runner = DifferentialSQLRunner()
         self.ledger = EvidenceLedger()
         self.verdict_engine = VerdictEngine()
         self.patch_comparator = PatchComparator()
         self.report_generator = ReportGenerator()
+        self.llm_reasoner = LLMSecurityReasoner()
+        self.evidence_graph_builder = EvidenceGraph()
 
     def run(
         self,
@@ -84,11 +99,16 @@ class MoriartyAgentLoop:
         functionality_invariant: Optional[FunctionalityInvariant] = None,
         require_functionality_invariant: bool = True,
         max_execution_time_seconds: Optional[float] = 10.0,
+        mode: Literal["rule_based", "ml_guided", "llm_assisted", "combined"] = "ml_guided",
     ) -> AgentLoopResult:
         loop_start_time = time.perf_counter()
         results: list[Any] = []
         decision_trace: list[dict] = []
         self.ledger.clear()
+
+        orig_ml = self.ml_analyzer.analyze(original_source) if original_source else None
+        patch_ml = self.ml_analyzer.analyze(patched_source) if patched_source else None
+        orig_llm = self.llm_reasoner.reason_about_source(original_source, ml_analysis=orig_ml) if original_source else None
 
         patch_comparison: Optional[PatchComparisonResult] = None
         orig_rule_ids: list[str] = []
@@ -215,6 +235,9 @@ class MoriartyAgentLoop:
                     patch_status=patch_comparison.status if patch_comparison else None,
                     original_rule_ids=orig_rule_ids,
                     patched_rule_ids=patch_rule_ids,
+                    ml_analysis=orig_ml,
+                    llm_reasoning=orig_llm,
+                    mode=mode,
                 )
 
                 step_entry = {
@@ -249,8 +272,12 @@ class MoriartyAgentLoop:
 
                 # Execute test against local dynamic runner or simulated fixture
                 if real_runner is not None:
-                    test_id = f"SQLI_REAL_APP_{len(results) + 1:03d}"
-                    real_result = real_runner.run_test(payload=payload, test_id=test_id)
+                    test_id = getattr(decision.test_case, "test_id", None) or f"SQLI_REAL_APP_{len(results) + 1:03d}"
+                    real_result = real_runner.run_test(
+                        payload=payload,
+                        test_id=test_id,
+                        test_case=decision.test_case,
+                    )
                     results.append(real_result)
 
                     evidence = self.ledger.record_local_app_test(real_result)
@@ -360,6 +387,22 @@ class MoriartyAgentLoop:
             elif not source_runtime_match:
                 limitations.append("Target provenance mismatch: executed runtime target could not be verified to correspond to submitted source.")
 
+            coverage = self.planner.get_coverage(results)
+
+            evidence_graph_data = self.evidence_graph_builder.build_verification_graph(
+                source_code=original_source,
+                patch_code=patched_source,
+                ast_findings=analysis.findings if analysis else [],
+                ml_analysis=MLAnalysisResult(**orig_ml) if orig_ml else None,
+                llm_reasoning=orig_llm,
+                decision_trace=decision_trace,
+                tests_executed=report_tests,
+                evidence_records=all_evidence,
+                verdict=verdict.value if hasattr(verdict, "value") else str(verdict),
+                verdict_summary=verdict_summary,
+                target_type=target_type,
+            )
+
             verification_response = VerificationResponse(
                 verification_id=str(uuid4()),
                 verdict=verdict,
@@ -389,6 +432,11 @@ class MoriartyAgentLoop:
                     "static_improvement_detected": patch_comparison.static_improvement_detected,
                     "dynamic_verification_performed": patch_comparison.dynamic_verification_performed,
                 } if patch_comparison else None,
+                coverage=coverage,
+                original_ml_analysis=MLAnalysisResult(**orig_ml) if orig_ml else None,
+                patched_ml_analysis=MLAnalysisResult(**patch_ml) if patch_ml else None,
+                llm_reasoning=orig_llm,
+                evidence_graph=evidence_graph_data,
             )
 
             # 7. Generate JSON Report
@@ -404,6 +452,7 @@ class MoriartyAgentLoop:
                 "stopping_reason": stopping_reason,
                 "tests_run": len(results),
                 "decision_trace": decision_trace,
+                "coverage": coverage.model_dump() if hasattr(coverage, "model_dump") else coverage.__dict__,
             }
 
             if report_path is not None:
@@ -435,6 +484,11 @@ class MoriartyAgentLoop:
                 dynamic_verification_performed=is_dynamic_target and len(results) > 0,
                 stopping_reason=stopping_reason,
                 verification_response=verification_response,
+                coverage=coverage,
+                original_ml_analysis=MLAnalysisResult(**orig_ml) if orig_ml else None,
+                patched_ml_analysis=MLAnalysisResult(**patch_ml) if patch_ml else None,
+                llm_reasoning=orig_llm,
+                evidence_graph=evidence_graph_data,
             )
 
         finally:

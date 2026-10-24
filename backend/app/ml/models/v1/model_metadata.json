@@ -1,0 +1,17 @@
+{
+  "model_version": "1.0.0",
+  "model_type": "TfidfVectorizer(char_wb, 2-5) + LogisticRegression(C=2.0)",
+  "trained_at": "2026-10-24T10:54:13.175179+00:00",
+  "total_samples": 44,
+  "train_samples": 33,
+  "test_samples": 11,
+  "metrics": {
+    "test_accuracy": 0.8182,
+    "test_precision": 0.75,
+    "test_recall": 1.0,
+    "test_f1": 0.8571,
+    "cv_f1_mean": 0.6675,
+    "cv_f1_std": 0.06
+  },
+  "artifact_file": "sql_injection_model.joblib"
+}

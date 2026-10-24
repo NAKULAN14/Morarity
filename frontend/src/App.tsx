@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Navbar } from './components/Navbar';
 import { OverviewWorkspace } from './pages/OverviewWorkspace';
+import { SqlSecurityLabWorkspace } from './pages/SqlSecurityLabWorkspace';
 import { NewVerificationWorkspace } from './pages/NewVerificationWorkspace';
 import { LiveResultsWorkspace } from './pages/LiveResultsWorkspace';
 import { ReportsArchiveView } from './pages/ReportsArchiveView';
+import { ArchitectureWorkspace } from './pages/ArchitectureWorkspace';
 import { ArchitectureModal } from './components/ArchitectureModal';
 import {
   checkBackendHealth,
@@ -24,7 +26,7 @@ import {
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'verify' | 'results' | 'reports'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'sqllab' | 'verify' | 'results' | 'reports' | 'architecture'>('overview');
   const [backendHealth, setBackendHealth] = useState<BackendHealth | null>(null);
   const [healthLoading, setHealthLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<VerificationStats | null>(null);
@@ -232,8 +234,15 @@ export const App: React.FC = () => {
             scenarios={scenarios}
             onSelectScenario={handleSelectScenario}
             onNavigateVerify={() => setActiveTab('verify')}
+            onNavigateSqlLab={() => setActiveTab('sqllab')}
             onNavigateReports={() => setActiveTab('reports')}
             onViewReport={handleSelectReport}
+            backendOnline={backendHealth !== null}
+          />
+        )}
+
+        {activeTab === 'sqllab' && (
+          <SqlSecurityLabWorkspace
             backendOnline={backendHealth !== null}
           />
         )}
@@ -266,6 +275,10 @@ export const App: React.FC = () => {
             onRefresh={refreshReportsAndStats}
             onSelectReport={handleSelectReport}
           />
+        )}
+
+        {activeTab === 'architecture' && (
+          <ArchitectureWorkspace />
         )}
       </main>
 

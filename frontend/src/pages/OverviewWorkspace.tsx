@@ -13,6 +13,7 @@ import {
   FolderClock,
   Clock,
   Layers,
+  Sparkles,
 } from 'lucide-react';
 import { Scenario, VerificationStats } from '../types';
 
@@ -21,6 +22,7 @@ interface OverviewWorkspaceProps {
   scenarios: Scenario[];
   onSelectScenario: (scenario: Scenario, autoRun?: boolean) => void;
   onNavigateVerify: () => void;
+  onNavigateSqlLab?: () => void;
   onNavigateReports: () => void;
   onViewReport: (filename: string) => void;
   backendOnline: boolean;
@@ -31,6 +33,7 @@ export const OverviewWorkspace: React.FC<OverviewWorkspaceProps> = ({
   scenarios,
   onSelectScenario,
   onNavigateVerify,
+  onNavigateSqlLab,
   onNavigateReports,
   onViewReport,
   backendOnline,
@@ -44,7 +47,7 @@ export const OverviewWorkspace: React.FC<OverviewWorkspaceProps> = ({
         <div className="relative z-10 max-w-4xl space-y-5">
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#11171B] border border-[#222B30] text-xs font-mono text-[#8B989E]">
             <span className="w-2 h-2 rounded-full bg-[#39E58C]" />
-            Agentic AI Structural Security Patch Verification
+            Moriarty 2.0 • ML-Guided Adaptive Verification & AST Patch Refinement
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-mono font-bold tracking-tight text-[#E8EEF0] leading-tight">
@@ -53,9 +56,9 @@ export const OverviewWorkspace: React.FC<OverviewWorkspaceProps> = ({
           </h1>
 
           <p className="text-sm sm:text-base text-[#8B989E] font-sans leading-relaxed max-w-2xl">
-            Moriarty is an adaptive security verification agent that attempts to disprove the claim
-            that a vulnerability has been fixed before allowing that claim to be marked verified.
-            It executes controlled differential tests, verifies target provenance, and prevents false safety.
+            Moriarty combines machine-learned query risk modeling with an adaptive verification agent.
+            It identifies vulnerable SQL patterns, generates and refines security patches, dynamically challenges
+            them against a 40-test attack catalog, and demands empirical proof before marking any fix verified.
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -66,6 +69,16 @@ export const OverviewWorkspace: React.FC<OverviewWorkspaceProps> = ({
               <Terminal className="w-4 h-4" />
               <span>Launch Verification Workstation</span>
             </button>
+
+            {onNavigateSqlLab && (
+              <button
+                onClick={onNavigateSqlLab}
+                className="px-5 py-2.5 rounded bg-[#1E1B4B] border border-[#6366F1]/60 text-[#C084FC] font-mono text-xs font-bold hover:bg-[#2E1065] transition-all flex items-center gap-2 shadow-sm"
+              >
+                <Sparkles className="w-4 h-4 text-[#C084FC]" />
+                <span>SQL Security Lab (Continuous)</span>
+              </button>
+            )}
 
             <button
               onClick={onNavigateReports}

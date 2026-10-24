@@ -1,0 +1,188 @@
+{
+    "verification_id": "0c14ff2c-cb8b-4508-a827-e3a3525ee0cd",
+    "verdict": "INCONCLUSIVE",
+    "summary": "Application functionality verification failed or required functionality invariants were not satisfied.",
+    "verification_scope": "Targeted local SQLite user search query path",
+    "dynamic_verification_performed": true,
+    "target_type": "SUBMITTED_SOURCE_EXECUTION",
+    "target_provenance": "RESTRICTED_SOURCE_ENV",
+    "submitted_source_executed": true,
+    "source_runtime_match": true,
+    "final_action": "STOP_INCONCLUSIVE",
+    "stopping_reason": "FUNCTIONALITY_INVARIANT_VIOLATED",
+    "analysis": {
+        "supported": true,
+        "vulnerability_type": null,
+        "findings": [
+            {
+                "rule_id": "NO_SQL_EXECUTION_FOUND",
+                "message": "No recognized SQL execution calls were found. This does not prove that the source code is safe.",
+                "severity": "INFO",
+                "line": null,
+                "evidence": null
+            }
+        ],
+        "security_invariants": [
+            "SQL query values must be passed separately from SQL query structure."
+        ],
+        "summary": "No recognized SQL execution calls were found. The code may be outside the analyzer's supported scope."
+    },
+    "tests_executed": [
+        {
+            "test_id": "SQLI_REAL_APP_001",
+            "passed": false,
+            "outcome": "FAIL",
+            "details": "Verification failed: Functionality invariant 'Default Benign User Lookup' FAILED. Expected 1 records matching username='alice', observed 0 records.",
+            "execution_time_ms": 0.055,
+            "error": null,
+            "expected_behavior": "Baseline application should be vulnerable (payload alters query logic to return unauthorized records); patched application must treat payload strictly as literal parameter data (only exact literal match or 0 records); configured application functionality invariants must remain intact.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' FAILED. Expected 1 records matching username='alice', observed 0 records.",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": false
+        }
+    ],
+    "evidence": [
+        {
+            "evidence_id": "f1008f8d-1693-442c-9905-f3a5d88d5c85",
+            "test_id": "STATIC_PATCH_COMPARISON",
+            "category": "STATIC_ANALYSIS",
+            "description": "The original unsafe pattern was not detected in the patched source, but no recognized safe SQL execution pattern was found to compare.",
+            "observed": {
+                "status": "INCONCLUSIVE",
+                "original_rule_ids": [
+                    "SQLI_UNSAFE_QUERY"
+                ],
+                "patched_rule_ids": [
+                    "NO_SQL_EXECUTION_FOUND"
+                ],
+                "static_improvement_detected": false,
+                "dynamic_verification_performed": false,
+                "target_type": "STATIC_SOURCE",
+                "target_provenance": "SUBMITTED_SOURCE_AST",
+                "submitted_source_executed": false,
+                "source_runtime_match": true
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T09:49:43.035170+00:00"
+        },
+        {
+            "evidence_id": "6f3ed7e7-384f-49a6-a633-5f91635090ff",
+            "test_id": "SQLI_REAL_APP_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Verification failed: Functionality invariant 'Default Benign User Lookup' FAILED. Expected 1 records matching username='alice', observed 0 records.",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR '1'='1",
+                "outcome": "FAIL",
+                "passed": false,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": false,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "Baseline application should be vulnerable (payload alters query logic to return unauthorized records); patched application must treat payload strictly as literal parameter data (only exact literal match or 0 records); configured application functionality invariants must remain intact.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' FAILED. Expected 1 records matching username='alice', observed 0 records.",
+                "execution_time_ms": 0.055,
+                "error": null
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T09:49:43.035477+00:00"
+        }
+    ],
+    "limitations": [
+        "Static source comparison does not establish runtime security.",
+        "Controlled demonstration tests do not execute the submitted application.",
+        "A VERIFIED verdict requires empirical evidence that directly supports the relevant security invariants.",
+        "Verification scope is limited to the tested SQL query execution path.",
+        "Scope of verification is restricted to the specific SQL query execution path tested."
+    ],
+    "patch_comparison": {
+        "status": "INCONCLUSIVE",
+        "summary": "The original unsafe pattern was not detected in the patched source, but no recognized safe SQL execution pattern was found to compare.",
+        "original_analysis": {
+            "supported": true,
+            "vulnerability_type": "SQL_INJECTION",
+            "findings": [
+                {
+                    "rule_id": "SQLI_UNSAFE_QUERY",
+                    "message": "The SQL query is constructed dynamically using string concatenation, interpolation, or formatting. This may allow untrusted input to alter SQL structure.",
+                    "severity": "HIGH",
+                    "line": 3,
+                    "evidence": "\"SELECT id, username, role, email FROM users WHERE username = '\" + username + \"'\""
+                }
+            ],
+            "security_invariants": [
+                "SQL query structure must not be controlled by untrusted input.",
+                "User-controlled values should be passed through query parameters.",
+                "Required application functionality must remain intact."
+            ],
+            "summary": "Potentially unsafe SQL query construction was detected. Dynamic verification is required to determine exploitability."
+        },
+        "patched_analysis": {
+            "supported": true,
+            "vulnerability_type": null,
+            "findings": [
+                {
+                    "rule_id": "NO_SQL_EXECUTION_FOUND",
+                    "message": "No recognized SQL execution calls were found. This does not prove that the source code is safe.",
+                    "severity": "INFO",
+                    "line": null,
+                    "evidence": null
+                }
+            ],
+            "security_invariants": [
+                "SQL query values must be passed separately from SQL query structure."
+            ],
+            "summary": "No recognized SQL execution calls were found. The code may be outside the analyzer's supported scope."
+        },
+        "original_rule_ids": [
+            "SQLI_UNSAFE_QUERY"
+        ],
+        "patched_rule_ids": [
+            "NO_SQL_EXECUTION_FOUND"
+        ],
+        "static_improvement_detected": false,
+        "dynamic_verification_performed": true
+    },
+    "agent": {
+        "final_action": "STOP_INCONCLUSIVE",
+        "final_reason": "Application functionality verification failed. The patch broke benign application behavior or required functionality invariants.",
+        "stopping_reason": "FUNCTIONALITY_INVARIANT_VIOLATED",
+        "tests_run": 1,
+        "decision_trace": [
+            {
+                "step": 1,
+                "patch_status": "INCONCLUSIVE",
+                "analyzer_findings": [
+                    "NO_SQL_EXECUTION_FOUND"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_OR",
+                "reason": "No tests have been executed yet. Static comparison is inconclusive. The agent will preserve uncertainty and proceed cautiously with controlled verification. The agent is starting with a boolean-based test.",
+                "test_input": "' OR '1'='1",
+                "test_outcome": "FAIL",
+                "evidence_id": "6f3ed7e7-384f-49a6-a633-5f91635090ff",
+                "stop_reason": null
+            },
+            {
+                "step": 2,
+                "patch_status": "INCONCLUSIVE",
+                "analyzer_findings": [
+                    "NO_SQL_EXECUTION_FOUND"
+                ],
+                "action": "STOP_INCONCLUSIVE",
+                "strategy": null,
+                "reason": "Application functionality verification failed. The patch broke benign application behavior or required functionality invariants.",
+                "test_input": null,
+                "test_outcome": null,
+                "evidence_id": null,
+                "stop_reason": "Application functionality verification failed. The patch broke benign application behavior or required functionality invariants."
+            }
+        ]
+    }
+}

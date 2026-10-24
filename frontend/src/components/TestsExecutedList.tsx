@@ -64,6 +64,22 @@ export const TestsExecutedList: React.FC<TestsExecutedListProps> = ({ tests }) =
               )}
             </div>
 
+            {/* Invariant and Category Badges */}
+            {(test.category || test.security_invariant) && (
+              <div className="flex flex-wrap items-center gap-2 mt-2 pt-1">
+                {test.category && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0E1B26] border border-[#38BDF8]/40 text-[#38BDF8]">
+                    Category: {test.category}
+                  </span>
+                )}
+                {test.security_invariant && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1A132F] border border-[#A78BFA]/40 text-[#C4B5FD]">
+                    Invariant: {test.security_invariant}
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Test Details */}
             <div className="mt-3 space-y-2">
               <p className="text-xs text-[#E8EEF0] font-sans leading-relaxed">

@@ -1,0 +1,823 @@
+{
+    "verification_id": "ef2f7fbe-f9ec-4013-98a8-ca43bfb66aed",
+    "verdict": "INCONCLUSIVE",
+    "summary": "Test execution encountered errors. The evidence is insufficient to verify the patch.",
+    "verification_scope": "Targeted local SQLite user search query path",
+    "dynamic_verification_performed": true,
+    "target_type": "SUBMITTED_SOURCE_EXECUTION",
+    "target_provenance": "RESTRICTED_SOURCE_ENV",
+    "submitted_source_executed": true,
+    "source_runtime_match": true,
+    "final_action": "STOP_FOR_INVESTIGATION",
+    "stopping_reason": "RUNTIME_ERROR",
+    "analysis": {
+        "supported": true,
+        "vulnerability_type": "SQL_INJECTION",
+        "findings": [
+            {
+                "rule_id": "SQLI_PARAMETERIZED_QUERY",
+                "message": "The SQL query appears to use parameterized execution. Verify that the query structure is static and that all untrusted values are passed as parameters.",
+                "severity": "INFO",
+                "line": 2,
+                "evidence": "'SELECT id, username, role, email FROM users WHERE username = ?'"
+            }
+        ],
+        "security_invariants": [
+            "SQL query structure must not be controlled by untrusted input.",
+            "User-controlled values should be passed through query parameters.",
+            "Required application functionality must remain intact."
+        ],
+        "summary": "Recognized SQL execution calls appear to use static query structures or parameterized execution. Dynamic verification is still required."
+    },
+    "tests_executed": [
+        {
+            "test_id": "SQLI_QUOTE_001",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.214,
+            "error": null,
+            "expected_behavior": "Patched target binds input strictly as data; returns 0 unauthorized rows.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "Quote and delimiter handling",
+            "security_invariant": "UNTRUSTED_INPUT_CANNOT_ESCAPE_STRING_DELIMITER"
+        },
+        {
+            "test_id": "BOOLEAN_COMMENT",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.271,
+            "error": null,
+            "expected_behavior": "Verify if SQL comment delimiter truncates query syntax.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "Comment-based SQL injection",
+            "security_invariant": "SQL_COMMENT_MARKERS_CANNOT_TRUNCATE_QUERY"
+        },
+        {
+            "test_id": "BOOLEAN_ADMIN",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.16,
+            "error": null,
+            "expected_behavior": "Verify if targeted user clause combined with comment bypasses authentication.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "Authentication query behavior",
+            "security_invariant": "UNTRUSTED_INPUT_CANNOT_ALTER_AUTHENTICATION_IDENTITY"
+        },
+        {
+            "test_id": "SQLI_BOOL_002",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.235,
+            "error": null,
+            "expected_behavior": "Relational operator handled as plain string; returns 0 records.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "Boolean-based SQL injection",
+            "security_invariant": "UNTRUSTED_INPUT_CANNOT_FORCE_BOOLEAN_TAUTOLOGY"
+        },
+        {
+            "test_id": "SQLI_UNION_001",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (1 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.539,
+            "error": null,
+            "expected_behavior": "UNION keyword treated as literal data; returns 0 records.",
+            "observed_behavior": "Vulnerable baseline returned 1 records (1 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "UNION-based SQL injection",
+            "security_invariant": "UNTRUSTED_INPUT_CANNOT_INJECT_UNION_DATA"
+        },
+        {
+            "test_id": "SQLI_NUM_001",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.186,
+            "error": null,
+            "expected_behavior": "Treated as literal string \"' OR 1 --\"; returns 0 records.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "Numeric parameter handling",
+            "security_invariant": "NUMERIC_OPERATORS_CANNOT_EVALUATE_IN_INPUT"
+        },
+        {
+            "test_id": "SQLI_LIKE_001",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.497,
+            "error": null,
+            "expected_behavior": "LIKE wildcard syntax bound as literal data; returns 0 records.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "LIKE-pattern behavior",
+            "security_invariant": "UNTRUSTED_INPUT_CANNOT_ALTER_PREDICATE_LOGIC"
+        },
+        {
+            "test_id": "SQLI_TYPE_001",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.2,
+            "error": null,
+            "expected_behavior": "typeof function treated as text parameter; returns 0 records.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "Type confusion",
+            "security_invariant": "UNTRUSTED_INPUT_CANNOT_ALTER_QUERY_SYNTAX"
+        },
+        {
+            "test_id": "SQLI_ENC_001",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.092,
+            "error": null,
+            "expected_behavior": "char() invocation treated as literal string; returns 0 records.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "Input encoding and normalization",
+            "security_invariant": "SPECIAL_CHARACTERS_TREATED_STRICTLY_AS_LITERAL_DATA"
+        },
+        {
+            "test_id": "SQLI_ERR_001",
+            "passed": true,
+            "outcome": "PASS",
+            "details": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "execution_time_ms": 0.152,
+            "error": null,
+            "expected_behavior": "Executes safely without runtime error or schema leakage; returns 0 records.",
+            "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "baseline_exploitable": true,
+            "patch_blocks_payload": true,
+            "functionality_intact": true,
+            "category": "Database error handling",
+            "security_invariant": "ERROR_FREE_EXECUTION_FOR_SPECIAL_DELIMITERS"
+        },
+        {
+            "test_id": "FUNC_BENIGN_001",
+            "passed": false,
+            "outcome": "ERROR",
+            "details": "Local application test execution encountered an error: cannot access local variable 'unauthorized_vuln_rows' where it is not associated with a value",
+            "execution_time_ms": 0.137,
+            "error": "cannot access local variable 'unauthorized_vuln_rows' where it is not associated with a value",
+            "expected_behavior": "Returns exactly 1 record matching username 'alice'.",
+            "observed_behavior": "Execution raised exception: cannot access local variable 'unauthorized_vuln_rows' where it is not associated with a value",
+            "baseline_exploitable": false,
+            "patch_blocks_payload": false,
+            "functionality_intact": false,
+            "category": "Legitimate functionality preservation",
+            "security_invariant": "BENIGN_USER_LOOKUP_PRESERVED"
+        }
+    ],
+    "evidence": [
+        {
+            "evidence_id": "3b189998-3976-4ba9-b4ac-4b6c916b7e65",
+            "test_id": "STATIC_PATCH_COMPARISON",
+            "category": "STATIC_ANALYSIS",
+            "description": "The recognized unsafe SQL construction in the original source is absent from the patched source, and the patch contains a recognized static or parameterized SQL pattern. This is a static improvement signal, not dynamic verification.",
+            "observed": {
+                "status": "PATCH_PATTERN_IMPROVED",
+                "original_rule_ids": [
+                    "SQLI_UNSAFE_QUERY"
+                ],
+                "patched_rule_ids": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "static_improvement_detected": true,
+                "dynamic_verification_performed": false,
+                "target_type": "STATIC_SOURCE",
+                "target_provenance": "SUBMITTED_SOURCE_AST",
+                "submitted_source_executed": false,
+                "source_runtime_match": true
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T10:41:46.983584+00:00"
+        },
+        {
+            "evidence_id": "e968c036-991a-4bef-9da6-d43708883065",
+            "test_id": "SQLI_QUOTE_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR '1'='1",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "Patched target binds input strictly as data; returns 0 unauthorized rows.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.214,
+                "error": null,
+                "test_category": "Quote and delimiter handling",
+                "security_invariant": "UNTRUSTED_INPUT_CANNOT_ESCAPE_STRING_DELIMITER",
+                "test_name": "Single Quote String Termination Tautology"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:46.986149+00:00"
+        },
+        {
+            "evidence_id": "c449bde7-e8ef-4e74-a033-db8f471cd701",
+            "test_id": "BOOLEAN_COMMENT",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR 1=1 --",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "Verify if SQL comment delimiter truncates query syntax.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.271,
+                "error": null,
+                "test_category": "Comment-based SQL injection",
+                "security_invariant": "SQL_COMMENT_MARKERS_CANNOT_TRUNCATE_QUERY",
+                "test_name": "BOOLEAN_COMMENT"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:46.987297+00:00"
+        },
+        {
+            "evidence_id": "3b11ed2f-4219-4a93-9790-4fe085d3628d",
+            "test_id": "BOOLEAN_ADMIN",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "admin' OR '1'='1' --",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "Verify if targeted user clause combined with comment bypasses authentication.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.16,
+                "error": null,
+                "test_category": "Authentication query behavior",
+                "security_invariant": "UNTRUSTED_INPUT_CANNOT_ALTER_AUTHENTICATION_IDENTITY",
+                "test_name": "BOOLEAN_ADMIN"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:46.989046+00:00"
+        },
+        {
+            "evidence_id": "7e1448cb-eb98-4205-a3fb-f7551993cdf2",
+            "test_id": "SQLI_BOOL_002",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR 2>1 --",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "Relational operator handled as plain string; returns 0 records.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.235,
+                "error": null,
+                "test_category": "Boolean-based SQL injection",
+                "security_invariant": "UNTRUSTED_INPUT_CANNOT_FORCE_BOOLEAN_TAUTOLOGY",
+                "test_name": "Relational Inequality Boolean Tautology"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:46.991012+00:00"
+        },
+        {
+            "evidence_id": "73c622df-548c-4822-b21e-37208d97e774",
+            "test_id": "SQLI_UNION_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (1 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' UNION SELECT 99, 'injected_user', 'admin', 'injected@moriarty.local' --",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 1,
+                "patched_rows_count": 0,
+                "expected_behavior": "UNION keyword treated as literal data; returns 0 records.",
+                "observed_behavior": "Vulnerable baseline returned 1 records (1 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.539,
+                "error": null,
+                "test_category": "UNION-based SQL injection",
+                "security_invariant": "UNTRUSTED_INPUT_CANNOT_INJECT_UNION_DATA",
+                "test_name": "UNION Synthetic Identity Data Injection"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:46.993395+00:00"
+        },
+        {
+            "evidence_id": "598e87b8-1809-4265-859f-9cda4aaf16b6",
+            "test_id": "SQLI_NUM_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR 1 --",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "Treated as literal string \"' OR 1 --\"; returns 0 records.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.186,
+                "error": null,
+                "test_category": "Numeric parameter handling",
+                "security_invariant": "NUMERIC_OPERATORS_CANNOT_EVALUATE_IN_INPUT",
+                "test_name": "Truthy Numeric Constant Literal Injection"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:46.995831+00:00"
+        },
+        {
+            "evidence_id": "55e7821e-7ffa-4ba2-bced-3b8efd94a3e0",
+            "test_id": "SQLI_LIKE_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR username LIKE '%' --",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "LIKE wildcard syntax bound as literal data; returns 0 records.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.497,
+                "error": null,
+                "test_category": "LIKE-pattern behavior",
+                "security_invariant": "UNTRUSTED_INPUT_CANNOT_ALTER_PREDICATE_LOGIC",
+                "test_name": "SQL LIKE Wildcard All Tautology"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:46.998138+00:00"
+        },
+        {
+            "evidence_id": "e85f1c3f-37ac-487a-85b0-05a99033121c",
+            "test_id": "SQLI_TYPE_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR typeof(username)='text' --",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "typeof function treated as text parameter; returns 0 records.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.2,
+                "error": null,
+                "test_category": "Type confusion",
+                "security_invariant": "UNTRUSTED_INPUT_CANNOT_ALTER_QUERY_SYNTAX",
+                "test_name": "SQLite typeof() Type Introspection Injection"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:46.999079+00:00"
+        },
+        {
+            "evidence_id": "dd36b754-7293-4acb-ade0-432b70e368af",
+            "test_id": "SQLI_ENC_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR char(49)=char(49) --",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "char() invocation treated as literal string; returns 0 records.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.092,
+                "error": null,
+                "test_category": "Input encoding and normalization",
+                "security_invariant": "SPECIAL_CHARACTERS_TREATED_STRICTLY_AS_LITERAL_DATA",
+                "test_name": "char() Function Dynamic Character Synthesis"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:46.999736+00:00"
+        },
+        {
+            "evidence_id": "d82507ae-ad5e-4240-b38d-7ad3f5a4ae04",
+            "test_id": "SQLI_ERR_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Differential runtime test succeeded. Payload demonstrated baseline exploitability on vulnerable target (3 rows) and was strictly treated as literal parameter on patched target (0 unauthorized rows). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "' OR 1=CAST('1' AS INTEGER) --",
+                "outcome": "PASS",
+                "passed": true,
+                "baseline_exploitable": true,
+                "patch_blocks_payload": true,
+                "functionality_intact": true,
+                "vulnerable_rows_count": 3,
+                "patched_rows_count": 0,
+                "expected_behavior": "Executes safely without runtime error or schema leakage; returns 0 records.",
+                "observed_behavior": "Vulnerable baseline returned 3 records (3 unauthorized; baseline_exploitable=True). Patched target returned 0 records (0 unauthorized; patch_blocks_payload=True). Functionality invariant 'Default Benign User Lookup' satisfied (1 match).",
+                "execution_time_ms": 0.152,
+                "error": null,
+                "test_category": "Database error handling",
+                "security_invariant": "ERROR_FREE_EXECUTION_FOR_SPECIAL_DELIMITERS",
+                "test_name": "Type Cast Function CAST() Probe"
+            },
+            "supports_verification": true,
+            "timestamp": "2026-10-24T10:41:47.001373+00:00"
+        },
+        {
+            "evidence_id": "a386690e-cd05-4945-a175-7436d10e8686",
+            "test_id": "FUNC_BENIGN_001",
+            "category": "REAL_APPLICATION_VERIFICATION",
+            "description": "Local application test execution encountered an error: cannot access local variable 'unauthorized_vuln_rows' where it is not associated with a value",
+            "observed": {
+                "target_type": "SUBMITTED_SOURCE_EXECUTION",
+                "target_provenance": "RESTRICTED_SOURCE_ENV",
+                "submitted_source_executed": true,
+                "source_runtime_match": true,
+                "verification_scope": "Targeted local SQLite user search query path",
+                "payload": "alice",
+                "outcome": "ERROR",
+                "passed": false,
+                "baseline_exploitable": false,
+                "patch_blocks_payload": false,
+                "functionality_intact": false,
+                "vulnerable_rows_count": 0,
+                "patched_rows_count": 0,
+                "expected_behavior": "Returns exactly 1 record matching username 'alice'.",
+                "observed_behavior": "Execution raised exception: cannot access local variable 'unauthorized_vuln_rows' where it is not associated with a value",
+                "execution_time_ms": 0.137,
+                "error": "cannot access local variable 'unauthorized_vuln_rows' where it is not associated with a value",
+                "test_category": "Legitimate functionality preservation",
+                "security_invariant": "BENIGN_USER_LOOKUP_PRESERVED",
+                "test_name": "Legitimate User Lookup: Alice"
+            },
+            "supports_verification": false,
+            "timestamp": "2026-10-24T10:41:47.003322+00:00"
+        }
+    ],
+    "limitations": [
+        "Static source comparison does not establish runtime security.",
+        "Controlled demonstration tests do not execute the submitted application.",
+        "A VERIFIED verdict requires empirical evidence that directly supports the relevant security invariants.",
+        "Verification scope is limited to the tested SQL query execution path.",
+        "Scope of verification is restricted to the specific SQL query execution path tested."
+    ],
+    "patch_comparison": {
+        "status": "PATCH_PATTERN_IMPROVED",
+        "summary": "The recognized unsafe SQL construction in the original source is absent from the patched source, and the patch contains a recognized static or parameterized SQL pattern. This is a static improvement signal, not dynamic verification.",
+        "original_analysis": {
+            "supported": true,
+            "vulnerability_type": "SQL_INJECTION",
+            "findings": [
+                {
+                    "rule_id": "SQLI_UNSAFE_QUERY",
+                    "message": "The SQL query is constructed dynamically using string concatenation, interpolation, or formatting. This may allow untrusted input to alter SQL structure.",
+                    "severity": "HIGH",
+                    "line": 3,
+                    "evidence": "\"SELECT id, username, role, email FROM users WHERE username = '\" + username + \"'\""
+                }
+            ],
+            "security_invariants": [
+                "SQL query structure must not be controlled by untrusted input.",
+                "User-controlled values should be passed through query parameters.",
+                "Required application functionality must remain intact."
+            ],
+            "summary": "Potentially unsafe SQL query construction was detected. Dynamic verification is required to determine exploitability."
+        },
+        "patched_analysis": {
+            "supported": true,
+            "vulnerability_type": "SQL_INJECTION",
+            "findings": [
+                {
+                    "rule_id": "SQLI_PARAMETERIZED_QUERY",
+                    "message": "The SQL query appears to use parameterized execution. Verify that the query structure is static and that all untrusted values are passed as parameters.",
+                    "severity": "INFO",
+                    "line": 2,
+                    "evidence": "'SELECT id, username, role, email FROM users WHERE username = ?'"
+                }
+            ],
+            "security_invariants": [
+                "SQL query structure must not be controlled by untrusted input.",
+                "User-controlled values should be passed through query parameters.",
+                "Required application functionality must remain intact."
+            ],
+            "summary": "Recognized SQL execution calls appear to use static query structures or parameterized execution. Dynamic verification is still required."
+        },
+        "original_rule_ids": [
+            "SQLI_UNSAFE_QUERY"
+        ],
+        "patched_rule_ids": [
+            "SQLI_PARAMETERIZED_QUERY"
+        ],
+        "static_improvement_detected": true,
+        "dynamic_verification_performed": true
+    },
+    "agent": {
+        "final_action": "STOP_FOR_INVESTIGATION",
+        "final_reason": "A test encountered an execution error. The agent must investigate before continuing.",
+        "stopping_reason": "RUNTIME_ERROR",
+        "tests_run": 11,
+        "decision_trace": [
+            {
+                "step": 1,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_OR",
+                "reason": "No tests have been executed yet. Triggered by finding SQLI_PARAMETERIZED_QUERY in patched source: patched code appears to use a safer query construction pattern. This finding indicates structural improvement but does not prove runtime security. Planning controlled verification actions to challenge the parameterized implementation. The agent is starting with a boolean-based test.",
+                "test_input": "' OR '1'='1",
+                "test_outcome": "PASS",
+                "evidence_id": "e968c036-991a-4bef-9da6-d43708883065",
+                "stop_reason": null
+            },
+            {
+                "step": 2,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_COMMENT",
+                "reason": "Triggered by finding SQLI_PARAMETERIZED_QUERY in patched source: patched code appears to use a safer query construction pattern. This finding indicates structural improvement but does not prove runtime security. Planning controlled verification actions to challenge the parameterized implementation. The previous payload exploited the baseline but was blocked by the patched implementation. The agent is trying another boolean-based strategy to attempt to disprove the fix.",
+                "test_input": "' OR 1=1 --",
+                "test_outcome": "PASS",
+                "evidence_id": "c449bde7-e8ef-4e74-a033-db8f471cd701",
+                "stop_reason": null
+            },
+            {
+                "step": 3,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "BOOLEAN_ADMIN",
+                "reason": "Triggered by finding SQLI_PARAMETERIZED_QUERY in patched source: patched code appears to use a safer query construction pattern. This finding indicates structural improvement but does not prove runtime security. Planning controlled verification actions to challenge the parameterized implementation. The previous payload exploited the baseline but was blocked by the patched implementation. The agent is trying another boolean-based strategy to attempt to disprove the fix.",
+                "test_input": "admin' OR '1'='1' --",
+                "test_outcome": "PASS",
+                "evidence_id": "3b11ed2f-4219-4a93-9790-4fe085d3628d",
+                "stop_reason": null
+            },
+            {
+                "step": 4,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "SQLI_BOOL_002",
+                "reason": "Previous test confirmed that quote-based manipulation is blocked. The planner selected a Boolean-based SQL injection test to evaluate a separate query-logic invariant ('UNTRUSTED_INPUT_CANNOT_FORCE_BOOLEAN_TAUTOLOGY').",
+                "test_input": "' OR 2>1 --",
+                "test_outcome": "PASS",
+                "evidence_id": "7e1448cb-eb98-4205-a3fb-f7551993cdf2",
+                "stop_reason": null
+            },
+            {
+                "step": 5,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "SQLI_UNION_001",
+                "reason": "Previous test confirmed that boolean-based sql injection is blocked. The planner selected a UNION-based SQL injection test to evaluate a separate query-logic invariant ('UNTRUSTED_INPUT_CANNOT_INJECT_UNION_DATA').",
+                "test_input": "' UNION SELECT 99, 'injected_user', 'admin', 'injected@moriarty.local' --",
+                "test_outcome": "PASS",
+                "evidence_id": "73c622df-548c-4822-b21e-37208d97e774",
+                "stop_reason": null
+            },
+            {
+                "step": 6,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "SQLI_NUM_001",
+                "reason": "Previous test confirmed that union-based sql injection is blocked. The planner selected a Numeric parameter handling test to evaluate a separate query-logic invariant ('NUMERIC_OPERATORS_CANNOT_EVALUATE_IN_INPUT').",
+                "test_input": "' OR 1 --",
+                "test_outcome": "PASS",
+                "evidence_id": "598e87b8-1809-4265-859f-9cda4aaf16b6",
+                "stop_reason": null
+            },
+            {
+                "step": 7,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "SQLI_LIKE_001",
+                "reason": "Previous test confirmed that numeric parameter handling is blocked. The planner selected a LIKE-pattern behavior test to evaluate a separate query-logic invariant ('UNTRUSTED_INPUT_CANNOT_ALTER_PREDICATE_LOGIC').",
+                "test_input": "' OR username LIKE '%' --",
+                "test_outcome": "PASS",
+                "evidence_id": "55e7821e-7ffa-4ba2-bced-3b8efd94a3e0",
+                "stop_reason": null
+            },
+            {
+                "step": 8,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "SQLI_TYPE_001",
+                "reason": "Previous test confirmed that like-pattern behavior is blocked. The planner selected a Type confusion test to evaluate a separate query-logic invariant ('UNTRUSTED_INPUT_CANNOT_ALTER_QUERY_SYNTAX').",
+                "test_input": "' OR typeof(username)='text' --",
+                "test_outcome": "PASS",
+                "evidence_id": "e85f1c3f-37ac-487a-85b0-05a99033121c",
+                "stop_reason": null
+            },
+            {
+                "step": 9,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "SQLI_ENC_001",
+                "reason": "Previous test confirmed that type confusion is blocked. The planner selected a Input encoding and normalization test to evaluate a separate query-logic invariant ('SPECIAL_CHARACTERS_TREATED_STRICTLY_AS_LITERAL_DATA').",
+                "test_input": "' OR char(49)=char(49) --",
+                "test_outcome": "PASS",
+                "evidence_id": "dd36b754-7293-4acb-ade0-432b70e368af",
+                "stop_reason": null
+            },
+            {
+                "step": 10,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "SQLI_ERR_001",
+                "reason": "Previous test confirmed that input encoding and normalization is blocked. The planner selected a Database error handling test to evaluate a separate query-logic invariant ('ERROR_FREE_EXECUTION_FOR_SPECIAL_DELIMITERS').",
+                "test_input": "' OR 1=CAST('1' AS INTEGER) --",
+                "test_outcome": "PASS",
+                "evidence_id": "d82507ae-ad5e-4240-b38d-7ad3f5a4ae04",
+                "stop_reason": null
+            },
+            {
+                "step": 11,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "RUN_TEST",
+                "strategy": "FUNC_BENIGN_001",
+                "reason": "Previous test confirmed that database error handling is blocked. The planner selected a Legitimate functionality preservation test to evaluate a separate query-logic invariant ('BENIGN_USER_LOOKUP_PRESERVED').",
+                "test_input": "alice",
+                "test_outcome": "ERROR",
+                "evidence_id": "a386690e-cd05-4945-a175-7436d10e8686",
+                "stop_reason": null
+            },
+            {
+                "step": 12,
+                "patch_status": "PATCH_PATTERN_IMPROVED",
+                "analyzer_findings": [
+                    "SQLI_PARAMETERIZED_QUERY"
+                ],
+                "action": "STOP_FOR_INVESTIGATION",
+                "strategy": null,
+                "reason": "A test encountered an execution error. The agent must investigate before continuing.",
+                "test_input": null,
+                "test_outcome": null,
+                "evidence_id": null,
+                "stop_reason": "A test encountered an execution error. The agent must investigate before continuing."
+            }
+        ],
+        "coverage": {
+            "tests_available": 40,
+            "tests_selected": 11,
+            "tests_executed": 11,
+            "tests_passed": 10,
+            "tests_failed": 0,
+            "tests_inconclusive": 1,
+            "tests_not_applicable": 3,
+            "categories_covered": [
+                "Quote and delimiter handling",
+                "Comment-based SQL injection",
+                "Authentication query behavior",
+                "Boolean-based SQL injection",
+                "UNION-based SQL injection",
+                "Numeric parameter handling",
+                "LIKE-pattern behavior",
+                "Type confusion",
+                "Input encoding and normalization",
+                "Database error handling",
+                "Legitimate functionality preservation"
+            ],
+            "invariants_verified": [
+                "UNTRUSTED_INPUT_CANNOT_ESCAPE_STRING_DELIMITER",
+                "SQL_COMMENT_MARKERS_CANNOT_TRUNCATE_QUERY",
+                "UNTRUSTED_INPUT_CANNOT_ALTER_AUTHENTICATION_IDENTITY",
+                "UNTRUSTED_INPUT_CANNOT_FORCE_BOOLEAN_TAUTOLOGY",
+                "UNTRUSTED_INPUT_CANNOT_INJECT_UNION_DATA",
+                "NUMERIC_OPERATORS_CANNOT_EVALUATE_IN_INPUT",
+                "UNTRUSTED_INPUT_CANNOT_ALTER_PREDICATE_LOGIC",
+                "UNTRUSTED_INPUT_CANNOT_ALTER_QUERY_SYNTAX",
+                "SPECIAL_CHARACTERS_TREATED_STRICTLY_AS_LITERAL_DATA",
+                "ERROR_FREE_EXECUTION_FOR_SPECIAL_DELIMITERS"
+            ],
+            "remaining_coverage_gaps": [],
+            "coverage_percentage": 100.0
+        }
+    }
+}

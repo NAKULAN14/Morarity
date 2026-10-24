@@ -22,6 +22,8 @@ import { DecisionTraceTimeline } from '../components/DecisionTraceTimeline';
 import { EvidenceLedgerView } from '../components/EvidenceLedgerView';
 import { TestsExecutedList } from '../components/TestsExecutedList';
 import { StaticAnalysisPanel } from '../components/StaticAnalysisPanel';
+import { CoverageSummaryCard } from '../components/CoverageSummaryCard';
+import { MLSecurityBar } from '../components/MLSecurityBar';
 
 interface LiveResultsWorkspaceProps {
   response: VerificationResponse;
@@ -107,6 +109,20 @@ export const LiveResultsWorkspace: React.FC<LiveResultsWorkspaceProps> = ({
         submittedSourceExecuted={response.submitted_source_executed}
         dynamicVerificationPerformed={response.dynamic_verification_performed}
       />
+
+      {/* ML Risk & Security Bar */}
+      {(response.original_ml_analysis || response.patched_ml_analysis) && (
+        <MLSecurityBar
+          originalML={response.original_ml_analysis}
+          patchedML={response.patched_ml_analysis}
+          mode={response.ml_guided_mode ? 'ml_guided' : 'rule_based'}
+        />
+      )}
+
+      {/* Coverage & Invariant Tracking Card */}
+      {response.coverage && (
+        <CoverageSummaryCard coverage={response.coverage} />
+      )}
 
       {/* Forensic Inspection Tabs */}
       <div className="border-b border-[#222B30] flex flex-wrap gap-1 sm:gap-2">

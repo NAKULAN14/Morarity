@@ -7,9 +7,12 @@ correspondence between submitted source code and runtime target objects.
 """
 
 import ast
+import inspect
 import re
 import sqlite3
 from typing import Any, Callable, Optional
+
+from app.analysis.sqlite_parser import SQLiteParser
 
 
 DISALLOWED_NAMES = {
@@ -137,37 +140,46 @@ class SourceBoundUserApp:
         self._init_db()
 
     def _init_db(self) -> None:
-        cursor = self.connection.cursor()
-        cursor.execute("DROP TABLE IF EXISTS users")
-        cursor.execute(
-            """
-            CREATE TABLE users (
-                id INTEGER PRIMARY KEY,
-                username TEXT NOT NULL,
-                role TEXT NOT NULL,
-                email TEXT NOT NULL
-            )
-            """
-        )
-        cursor.executemany(
-            "INSERT INTO users (id, username, role, email) VALUES (?, ?, ?, ?)",
-            [
-                (1, "alice", "user", "alice@example.local"),
-                (2, "bob", "user", "bob@example.local"),
-                (3, "charlie", "admin", "charlie@example.local"),
-            ],
-        )
-        self.connection.commit()
+        tables = SQLiteParser.extract_tables(self.source_code)
+        columns = SQLiteParser.extract_columns(self.source_code)
+        SQLiteParser.synthesize_mock_db(self.connection, tables, columns)
 
     def search_users(self, username: str) -> list[dict[str, Any]]:
-        cursor = self.connection.cursor()
-        # Call the validated submitted function
-        raw_result = self.query_func(cursor, username)
+        # Inspect query function parameter signature
+        sig = inspect.signature(self.query_func)
+        param_names = list(sig.parameters.keys())
+        first_param = param_names[0] if param_names else "cursor"
+
+        target = self.connection if first_param in ("conn", "connection", "db") else self.connection.cursor()
+        cursor = self.connection.cursor() if target is self.connection else target
+
+        try:
+            raw_result = self.query_func(target, username)
+        except sqlite3.OperationalError as op_err:
+            err_msg = str(op_err)
+            if "no such column:" in err_msg:
+                missing_col = err_msg.split("no such column:")[-1].strip().split()[0].split(".")[-1]
+                tables = SQLiteParser.extract_tables(self.source_code)
+                for tbl in tables:
+                    try:
+                        self.connection.execute(f"ALTER TABLE {tbl} ADD COLUMN {missing_col} TEXT")
+                    except Exception:
+                        pass
+                raw_result = self.query_func(target, username)
+            else:
+                raise
+
         if raw_result is None:
             try:
                 raw_result = cursor.fetchall()
             except Exception:
-                raw_result = []
+                try:
+                    if hasattr(target, "fetchall"):
+                        raw_result = target.fetchall()
+                    else:
+                        raw_result = []
+                except Exception:
+                    raw_result = []
 
         # Normalize rows into list of dicts
         if raw_result is None:
@@ -175,17 +187,26 @@ class SourceBoundUserApp:
 
         rows: list[Any] = raw_result if isinstance(raw_result, (list, tuple)) else [raw_result]
         normalized: list[dict[str, Any]] = []
+        col_names = [d[0] for d in cursor.description] if getattr(cursor, "description", None) else []
 
         for r in rows:
             if isinstance(r, dict):
                 normalized.append(r)
             elif isinstance(r, (list, tuple)):
-                normalized.append({
-                    "id": r[0] if len(r) > 0 else None,
-                    "username": r[1] if len(r) > 1 else "",
-                    "role": r[2] if len(r) > 2 else "",
-                    "email": r[3] if len(r) > 3 else "",
-                })
+                if col_names:
+                    row_dict = {col_names[i]: r[i] for i in range(min(len(col_names), len(r)))}
+                    if "id" not in row_dict and len(r) > 0:
+                        row_dict["id"] = r[0]
+                    if "username" not in row_dict and len(r) > 1:
+                        row_dict["username"] = str(r[1])
+                    normalized.append(row_dict)
+                else:
+                    normalized.append({
+                        "id": r[0] if len(r) > 0 else None,
+                        "username": r[1] if len(r) > 1 else "",
+                        "role": r[2] if len(r) > 2 else "",
+                        "email": r[3] if len(r) > 3 else "",
+                    })
         return normalized
 
     def close(self) -> None:

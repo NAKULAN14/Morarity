@@ -38,6 +38,9 @@ class LocalAppTestResult:
     execution_time_ms: float = 0.0
     error: Optional[str] = None
     verification_scope: str = "Targeted local SQLite user search query path"
+    category: Optional[str] = None
+    security_invariant: Optional[str] = None
+    test_name: Optional[str] = None
 
     def to_test_result(self) -> TestResult:
         return TestResult(
@@ -52,6 +55,8 @@ class LocalAppTestResult:
             baseline_exploitable=self.baseline_exploitable,
             patch_blocks_payload=self.patch_blocks_payload,
             functionality_intact=self.functionality_intact,
+            category=self.category,
+            security_invariant=self.security_invariant,
         )
 
 
@@ -98,6 +103,9 @@ class LocalAppVerificationRunner:
         self,
         payload: str,
         test_id: str = "SQLI_REAL_001",
+        category: Optional[str] = None,
+        security_invariant: Optional[str] = None,
+        test_case: Optional[Any] = None,
     ) -> LocalAppTestResult:
         """
         Execute payload against both vulnerable and patched local applications,
@@ -105,10 +113,17 @@ class LocalAppVerificationRunner:
         """
         start_time = time.perf_counter()
 
+        cat = category or (test_case.category if test_case else "SQL Injection Resistance")
+        inv = security_invariant or (test_case.security_invariant if test_case else "UNTRUSTED_INPUT_CANNOT_ALTER_QUERY_SYNTAX")
+        test_name = test_case.name if test_case else test_id
+
         expected = (
-            "Baseline application should be vulnerable (payload alters query logic to return unauthorized records); "
-            "patched application must treat payload strictly as literal parameter data (only exact literal match or 0 records); "
-            "configured application functionality invariants must remain intact."
+            getattr(test_case, "expected_behavior", None)
+            or (
+                "Baseline application should be vulnerable (payload alters query logic to return unauthorized records); "
+                "patched application must treat payload strictly as literal parameter data (only exact literal match or 0 records); "
+                "configured application functionality invariants must remain intact."
+            )
         )
 
         try:
@@ -150,34 +165,47 @@ class LocalAppVerificationRunner:
 
             elapsed_ms = round((time.perf_counter() - start_time) * 1000, 3)
 
+            def _row_matches_payload(r: dict[str, Any], val: str) -> bool:
+                if "username" in r:
+                    return r.get("username") == val
+                for k, v in r.items():
+                    if isinstance(v, str) and v == val:
+                        return True
+                return False
+
             # 4. Rigorous SQL Injection Semantic Evaluation
-            # Baseline is exploitable if SQL injection altered query syntax to return records
-            # that do NOT literally match the queried username
-            unauthorized_vuln_rows = [
-                r for r in vuln_rows
-                if r.get("username") != payload
-            ]
-            baseline_exploitable = len(unauthorized_vuln_rows) > 0 or len(vuln_rows) > 1
+            is_benign = getattr(test_case, "is_benign", False)
+            if is_benign:
+                # For legitimate functionality tests, baseline and patch should both return matching records
+                baseline_exploitable = len(vuln_rows) > 0
+                patch_blocks_payload = (len(patched_rows) > 0 and all(_row_matches_payload(r, payload) for r in patched_rows))
+                passed = baseline_exploitable and patch_blocks_payload and functionality_intact
+            else:
+                # Baseline is exploitable if SQL injection altered query syntax to return records
+                # that do NOT literally match the queried parameter
+                unauthorized_vuln_rows = [
+                    r for r in vuln_rows
+                    if not _row_matches_payload(r, payload)
+                ]
+                baseline_exploitable = len(unauthorized_vuln_rows) > 0 or len(vuln_rows) > 1
 
-            # Patch successfully blocks payload if NO unauthorized records are returned.
-            # In a parameterized query `WHERE username = ?`, only a record whose username literally
-            # equals the payload can be returned. If any returned record has username != payload,
-            # then query syntax was altered or sanitization bypassed!
-            unauthorized_patched_rows = [
-                r for r in patched_rows
-                if r.get("username") != payload
-            ]
-            patch_blocks_payload = (len(unauthorized_patched_rows) == 0)
+                # Patch successfully blocks payload if NO unauthorized records are returned.
+                # In a parameterized query, only a record literally matching the payload can be returned.
+                unauthorized_patched_rows = [
+                    r for r in patched_rows
+                    if not _row_matches_payload(r, payload)
+                ]
+                patch_blocks_payload = (len(unauthorized_patched_rows) == 0)
 
-            # Overall test pass condition:
-            # - Baseline must be proven exploitable for this payload (not a no-op payload)
-            # - Patch must block the payload (no unauthorized records)
-            # - Functionality must remain intact
-            passed = (
-                baseline_exploitable
-                and patch_blocks_payload
-                and functionality_intact
-            )
+                # Overall test pass condition:
+                # - Baseline must be proven exploitable for this payload (not a no-op payload)
+                # - Patch must block the payload (no unauthorized records)
+                # - Functionality must remain intact
+                passed = (
+                    baseline_exploitable
+                    and patch_blocks_payload
+                    and functionality_intact
+                )
             outcome = "PASS" if passed else "FAIL"
 
             observed = (
@@ -228,6 +256,9 @@ class LocalAppVerificationRunner:
                 details=details,
                 execution_time_ms=elapsed_ms,
                 error=None,
+                category=cat,
+                security_invariant=inv,
+                test_name=test_name,
             )
 
         except Exception as exc:
@@ -249,4 +280,7 @@ class LocalAppVerificationRunner:
                 details=f"Local application test execution encountered an error: {exc}",
                 execution_time_ms=elapsed_ms,
                 error=str(exc),
+                category=cat,
+                security_invariant=inv,
+                test_name=test_name,
             )
